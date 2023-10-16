@@ -1,0 +1,114 @@
+#
+# This is a parser for Nanomatch GmbH's kMC software "Lightforge"
+#
+#
+#
+#
+#
+import os
+import re
+import datetime
+import numpy as np
+from pathlib import Path
+
+from nomad.datamodel import EntryArchive
+from nomad.parsing import MatchingParser
+from nomad.units import ureg as units
+from nomad.datamodel.metainfo.simulation.run import Run, Program
+from nomad.datamodel.metainfo.simulation.system import System
+from nomad.datamodel.metainfo.simulation.calculation import Calculation, Energy, EnergyEntry
+from nomad.datamodel.metainfo.workflow import Workflow
+from nomad.datamodel.results import Results, Properties, Structure
+from nomad.parsing.file_parser import UnstructuredTextFileParser, Quantity
+from nomad.datamodel.optimade import Species
+from . import metainfo  # pylint: disable=unused-import
+from .metainfo.lightforge import IV, IQE2, Current_density, Current_characteristics, Experiments, Material, Input
+
+
+def DetailedParser(filepath, archive):
+    sec_run = archive.m_create(Run)
+    sec_calc = sec_run.m_create(Calculation)
+    sec_experiments =  sec_calc.m_create(Experiments)
+    sec_current_characteristics = sec_experiments.m_create(Current_characteristics)
+#    sec_current_density= sec_current_characteristics.m_create(Current_density)
+
+    sec_IQE2 = sec_current_characteristics.m_create(IQE2)
+    sec_IV = sec_current_characteristics.m_create(IV)
+    for root, dirs, files in sorted(os.walk(filepath.parent)):
+        
+        
+        for file in sorted(files):
+            
+            with open(root +'/'+ file, 'rb') as f:
+                if 'current_density' in file and 'all_data_points' not in root:
+                    sec_current_density = sec_current_characteristics.m_create(Current_density)
+                    sec_current_density.value = []
+                    
+                    for i, line in enumerate(f):
+                        sec_current_density.value.append(float(line))
+                if 'IQE2_all_currents' in file and 'all_data_points' not in root:
+                    for i, line in enumerate(f):
+                        rows = i+1
+                    
+                    a = np.zeros((rows,2))
+                    sec_IQE2.iqe2_all_currents = a
+
+                    f.seek(0)
+                    for i, line in enumerate(f):
+                        
+                        parts = line.split()
+                        
+                        sec_IQE2.iqe2_all_currents[i][0] = parts[0]
+                        sec_IQE2.iqe2_all_currents[i][1] = parts[1]
+                if 'IQE2_all_fields' in file and 'all_data_points' not in root:
+                    for i, line in enumerate(f):
+                        rows = i + 1
+                    b = np.zeros((rows,2))
+                    sec_IQE2.iqe2_all_fields = b
+                    f.seek(0)
+                    for i, line in enumerate(f):
+                        parts = line.split()
+                        sec_IQE2.iqe2_all_fields[i][0] = parts[0]
+                        sec_IQE2.iqe2_all_fields[i][1] = parts[1] 
+                if re.search(r'^IV_all_fields.dat$', file) and 'all_data_points' not in root:
+                    for i, line in enumerate(f):
+                        rows = i + 1
+                    c = np.zeros((rows,3))
+                    sec_IV.iv_all_fields = c
+                    f.seek(0)
+                    for i, line in enumerate(f):
+                        parts = line.split()
+                        
+                        sec_IV.iv_all_fields[i][0] = parts[0]
+                        sec_IV.iv_all_fields[i][1] = parts[1]                 
+                        sec_IV.iv_all_fields[i][2] = parts[2]           
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+                        
+
+class LightforgeParser():
+
+    def parse(self, filepath, archive, logger):
+        input_run = archive.m_create(Run)
+        input_run.program_name = 'Lightforge'
+        input_run.program = Program(name='Lightforge')
+        
+        mainfile = Path(filepath)
+        
+        
+        
+        DetailedParser(mainfile, archive)

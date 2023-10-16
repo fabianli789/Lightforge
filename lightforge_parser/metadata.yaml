@@ -1,0 +1,10 @@
+codeLabel: LIGHTFORGE
+codeLabelStyle: All in capitals
+codeName: lightforge
+codeUrl:
+codeCategory: Atomistic code
+status: production
+parserDirName: lightforge_parser
+parserSpecific: ''
+preamble: ''
+tableOfFiles: ''

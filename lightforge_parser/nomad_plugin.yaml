@@ -1,0 +1,8 @@
+plugin_type: parser
+name: parsers/lightforge
+description: |
+  This is a simple hello world parser. This is meant as a template. Fork the github
+  project to create your own parser.
+mainfile_name_re: ^.*settings$
+parser_class_name: lightforge_parser.LightforgeParser
+code_name: LIGHTFORGE
