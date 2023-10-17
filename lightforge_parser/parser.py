@@ -22,7 +22,7 @@ from nomad.datamodel.results import Results, Properties, Structure
 from nomad.parsing.file_parser import UnstructuredTextFileParser, Quantity
 from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
-from .metainfo.lightforge import IV, IQE2, Current_density, Current_characteristics, Experiments, Material, Input
+from .metainfo.lightforge import IV, IQE2, Current_density, Current_characteristics, Experiments, Material, Input, Mobility
 
 
 def DetailedParser(filepath, archive):
@@ -31,7 +31,7 @@ def DetailedParser(filepath, archive):
     sec_experiments =  sec_calc.m_create(Experiments)
     sec_current_characteristics = sec_experiments.m_create(Current_characteristics)
 #    sec_current_density= sec_current_characteristics.m_create(Current_density)
-
+    
     sec_IQE2 = sec_current_characteristics.m_create(IQE2)
     sec_IV = sec_current_characteristics.m_create(IV)
     for root, dirs, files in sorted(os.walk(filepath.parent)):
@@ -42,10 +42,11 @@ def DetailedParser(filepath, archive):
             with open(root +'/'+ file, 'rb') as f:
                 if 'current_density' in file and 'all_data_points' not in root:
                     sec_current_density = sec_current_characteristics.m_create(Current_density)
-                    sec_current_density.value = []
-                    
+                    value = []
                     for i, line in enumerate(f):
-                        sec_current_density.value.append(float(line))
+                        line = float(line)
+                        value.append(line)
+                    sec_current_density.value = np.array(value)
                 if 'IQE2_all_currents' in file and 'all_data_points' not in root:
                     for i, line in enumerate(f):
                         rows = i+1
@@ -82,11 +83,24 @@ def DetailedParser(filepath, archive):
                         sec_IV.iv_all_fields[i][0] = parts[0]
                         sec_IV.iv_all_fields[i][1] = parts[1]                 
                         sec_IV.iv_all_fields[i][2] = parts[2]           
-    
-    
-    
-    
-    
+                if re.search(r'mobilities_\d', file) and 'all_data_points' not in root:
+                    sec_mobility = sec_current_characteristics.m_create(Mobility)
+                    value = []
+                    for i, line in enumerate(f):
+                        line=float(line)
+                        value.append(line)
+                    sec_mobility.value = np.array(value)
+                if re.search(r'mobilities_all_fields', file) and 'all_data_points' not in root:
+                    for i, line in enumerate(f):
+                        rows  = i +1 
+                    d = np.zeros((rows, 3))
+                    sec_mobility.mobilities_all_fields = d
+                    f.seek(0)
+                    for i, line in enumerate(f):
+                        parts = line.split()
+                        sec_mobility.mobilities_all_fields[i][0] = parts[0]
+                        sec_mobility.mobilities_all_fields[i][1] = parts[1]
+                        sec_mobility.mobilities_all_fields[i][2] = parts[2]
     
     
     

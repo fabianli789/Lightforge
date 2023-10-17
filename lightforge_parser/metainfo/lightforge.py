@@ -23,7 +23,10 @@ from nomad.datamodel import results, optimade
 
 
 m_package = Package()
-
+class Mobility(MSection):
+    m_def = Section(validate=True)
+    value = Quantity(type=np.float64, shape=['*'], description='The number of (repeating) subsections of "mobility" corresponds to the number of applied electric fields, which are given in the "run.calculation.input" section, with subsection "0" being the first electric field.' )
+    mobilities_all_fields = Quantity(type=np.float64, shape=['*', 3], description='1st column is electric field^0.5 in (V/cm)^0.5, 2nd column is mobility in cm^2/(Vs).')
 class IV(MSection):
     m_def =  Section(validate=False)
     name = Quantity(type=str)
@@ -42,6 +45,7 @@ class Current_characteristics(MSection):
     current_density = SubSection(sub_section=Current_density.m_def, repeats=True)    
     IQE2 = SubSection(sub_section=IQE2.m_def, repeats=False)
     IV = SubSection(sub_section=IV.m_def, repeats=False)
+    mobility = SubSection(sub_section=Mobility.m_def, repeats=True)
 class Experiments(MSection):
     m_def = Section(validate=False)
     current_characteristics = SubSection(sub_section=Current_characteristics.m_def, repeats=False)
