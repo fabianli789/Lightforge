@@ -101,7 +101,7 @@ def DetailedParser(filepath, archive):
                         sec_mobility.mobilities_all_fields[i][0] = parts[0]
                         sec_mobility.mobilities_all_fields[i][1] = parts[1]
                         sec_mobility.mobilities_all_fields[i][2] = parts[2]
-    
+                
     
     
     
@@ -117,9 +117,9 @@ def DetailedParser(filepath, archive):
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):
-        input_run = archive.m_create(Run)
-        input_run.program_name = 'Lightforge'
-        input_run.program = Program(name='Lightforge')
+        sec_program = archive.m_setdefault('run.program')
+        sec_program.name = "Lightforge"
+
         
         mainfile = Path(filepath)
         
