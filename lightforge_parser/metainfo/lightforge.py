@@ -24,7 +24,7 @@ from nomad.datamodel import results, optimade
 
 m_package = Package()
 class Mobility(MSection):
-    m_def = Section(validate=True)
+    m_def = Section(validate=False)
     value = Quantity(type=np.float64, shape=['*'], description='The number of (repeating) subsections of "mobility" corresponds to the number of applied electric fields, which are given in the "run.calculation.input" section, with subsection "0" being the first electric field.' )
     mobilities_all_fields = Quantity(type=np.float64, shape=['*', 3], description='1st column is electric field^0.5 in (V/cm)^0.5, 2nd column is mobility in cm^2/(Vs).')
 class IV(MSection):
@@ -38,7 +38,8 @@ class IQE2(MSection):
     iqe2_all_fields = Quantity(type=np.float64, shape=['*', 2], description='1st column is voltage in Volts, 2nd column is IQE.')
     iqe2_all_currents = Quantity(type=np.float64, shape=['*',2], description='1st column is current density in mA/cm2, 2nd column is the Internal Quantum Efficiency (IQE). The current densities are a factor 10 too large.')
 class Current_density(MSection):
-    value = Quantity(type=float, shape=['*'],  description='The number of (repeating) subsections of "current_density" corresponds to the number of applied electric fields, which are given in the "run.calculation.input" section, with subsection "0" being the first electric field.')
+    m_def = Section(validate=False)
+    value = Quantity(type=np.float64, shape=['*'],  description='The number of (repeating) subsections of "current_density" corresponds to the number of applied electric fields, which are given in the "run.calculation.input" section, with subsection "0" being the first electric field.')
 
 class Current_characteristics(MSection):
     m_def = Section(validate=False)
