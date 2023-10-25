@@ -23,6 +23,15 @@ from nomad.datamodel import results, optimade
 
 
 m_package = Package()
+class Exciton_decay_density_average(MSection):
+    value = Quantity(type=np.float64)
+
+class Charge_density_average(MSection):
+    value = Quantity(type=np.float64, shape=[3, '*'], description='1st row is device length in nm, 2nd row is average number of electrons, 3rd row is average number of holes. 1st repeating subsection corresponds to first electric field applied, etc.')
+
+class Particle_densities(MSection):
+    charge_density_average = SubSection(sub_section=Charge_density_average.m_def, repeats=True)
+    exciton_decay_density_average = SubSection(sub_section=Exciton_decay_density_average.m_def, repeats=True)
 class Mobility(MSection):
     m_def = Section(validate=False)
     value = Quantity(type=np.float64, shape=['*'], description='The number of (repeating) subsections of "mobility" corresponds to the number of applied electric fields, which are given in the "run.calculation.input" section, with subsection "0" being the first electric field.' )
@@ -50,19 +59,18 @@ class Current_characteristics(MSection):
 class Experiments(MSection):
     m_def = Section(validate=False)
     current_characteristics = SubSection(sub_section=Current_characteristics.m_def, repeats=False)
+    particle_densities = SubSection(sub_section=Particle_densities.m_def, repeats=False)
 class Material(MSection):
     m_def = Section(validate=False)
     
 class Input(MSection):
     m_def = Section(validate=False)
 
-class Calculation(simulation.calculation.Calculation):
+class LightforgeCalculation(simulation.calculation.Calculation):
     m_def = Section(validate=False, extends_base_section=True)    
     experiments = SubSection(sub_section=Experiments.m_def, repeats=False)
     material = SubSection(sub_section=Material.m_def, repeats=False)
     input = SubSection(sub_section=Input.m_def, repeats=False)
-    
-class Run(simulation.run.Run):
-    m_def = Section(validate=False, extends_base_section=True)
+
 
 m_package.__init_metainfo__()
