@@ -5,6 +5,7 @@
 #
 #
 #
+import yaml
 import os
 import re
 import datetime
@@ -22,7 +23,7 @@ from nomad.datamodel.results import Results, Properties, Structure
 from nomad.parsing.file_parser import UnstructuredTextFileParser, Quantity
 from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
-from .metainfo.lightforge import IV, IQE2, Current_density, Current_characteristics, Experiments, Material, Input, Mobility, Particle_densities, Charge_density_average
+from .metainfo.lightforge import IV, IQE2, Current_density, Current_characteristics, Experiments, Material, Input, Mobility, Particle_densities, Charge_density_average, Exciton_decay_density_average
 
 
 def DetailedParser(filepath, archive):
@@ -126,9 +127,11 @@ def DetailedParser(filepath, archive):
                     value[0] = device_length
                     value[1] = electrons
                     value[2] = holes  
-                    sec_charge_density_average.value =  value
-                    
-                    
+                    sec_charge_density_average.value = value
+                if re.search(r'exciton_decay_density_average_\d+', file)  and 'all_data_points'  not in root:
+                   sec_exciton_decay_density_average  = sec_particle_densities.m_create(Exciton_decay_density_average)              
+#                   yaml =  yaml.safe_load(f)
+
     
     
     
