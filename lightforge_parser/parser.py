@@ -36,10 +36,15 @@ def DetailedParser(filepath, archive):
     sec_IQE2 = sec_current_characteristics.m_create(IQE2)
     sec_IV = sec_current_characteristics.m_create(IV)
     for root, dirs, files in sorted(os.walk(filepath.parent)):
+        files = sorted(files)
+        i = 0
+        while i < len(files):
+            if '.png' in files[i] or '.npz' in files[i]:
+                files.remove(files[i])
+            else:
+                i += 1    
         
-        
-        for file in sorted(files):
-            
+        for file in files:    
             with open(root +'/'+ file, 'rb') as f:
                 if 'current_density' in file and 'all_data_points' not in root:
                     sec_current_density = sec_current_characteristics.m_create(Current_density)
