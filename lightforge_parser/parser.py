@@ -23,7 +23,11 @@ from nomad.datamodel.results import Results, Properties, Structure
 from nomad.parsing.file_parser import UnstructuredTextFileParser, Quantity
 from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
-from .metainfo.lightforge import IV, IQE2, Current_density, Current_characteristics, Experiments, Material, Input, Mobility, Particle_densities, Charge_density_average, Exciton_decay_density_average
+from .metainfo.lightforge import (
+                            IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
+                            Input, Mobility, Particle_densities, Charge_density_average, 
+                            Exciton_decay_density_average, Photon_creation_density_average,
+                            Quenching_density_average)
 
 
 def DetailedParser(filepath, archive):
@@ -134,16 +138,62 @@ def DetailedParser(filepath, archive):
                     value[2] = holes  
                     sec_charge_density_average.value = value
                 if re.search(r'exciton_decay_density_average_\d+', file)  and 'all_data_points'  not in root:
-                   sec_exciton_decay_density_average  = sec_particle_densities.m_create(Exciton_decay_density_average)              
-#                   yaml =  yaml.safe_load(f)
-
-    
-    
-    
-    
-    
-    
-
+                    sec_exciton_decay_density_average  = sec_particle_densities.m_create(Exciton_decay_density_average)              
+                    file_exciton_decay_density_average =  yaml.safe_load(f)
+                if re.search(r'photon_creation_densitiy_average_\d+', file) and 'all_data_points' not in root:
+                    sec_photon_creation_density_average = sec_particle_densities.m_create(Photon_creation_density_average)
+                    
+                    device_length = []
+                    photons = []
+                    excitons = []
+                    for i, line in enumerate(f):
+                        columns = len(line.split())
+                        break
+                    f.seek(0)
+                    value = np.zeros((3, columns))
+                    for i, line in enumerate(f):
+                        if i == 0:
+                            parts = line.split()
+                            device_length = parts
+                        if i == 1:
+                            parts = line.split()
+                            photons = parts
+                        if i == 2:
+                            parts = line.split()
+                            excitons = parts
+                    value[0] = device_length
+                    value[1] = photons
+                    value[2] = excitons
+                    sec_photon_creation_density_average.value = value
+                if re.search(r'quenching_density_average_\d+', file) and 'all_data_points' not in root:
+                    sec_quenching_density_average = sec_particle_densities.m_create(Quenching_density_average)
+                    device_length = []
+                    excitons_quenched = []
+                    electrons = []
+                    holes = []
+                    for i, line in enumerate(f):
+                        columns = len(line.split())
+                        break
+                    f.seek(0)
+                    value = np.zeros((4, columns))
+                    for i, line in enumerate(f):
+                        if i == 0:
+                            parts = line.split()
+                            device_length = parts
+                        if i == 1:
+                            parts = line.split()
+                            excitons_quenched = parts
+                        if i == 2:
+                            parts = line.split()
+                            electrons = parts
+                        if i == 3:
+                            parts = line.split()
+                            holes = parts
+                    value[0] = device_length     
+                    value[1] = excitons_quenched
+                    value[2] = electrons
+                    value[3] = holes 
+                    sec_quenching_density_average.value = value
 
                         
 
