@@ -40,8 +40,24 @@ class Photon_creation_density_average(MSection):
                                                                     electric field applied etc."""))
 class Exciton_decay_density_average(MSection):
     m_def = Section(validate=False)
-    value = Quantity(type=np.float64)
-
+    
+    cs = Quantity(type=np.float64, shape=['*'], description='avg. number of charge separations.')
+    eet = Quantity(type=np.float64, shape=['*'])
+    ept = Quantity(type=np.float64, shape=['*'])
+    ptq = Quantity(type=np.float64, shape=['*'], description='polaron-triplet quenching.')
+    spq = Quantity(type=np.float64, shape=['*'], description='singlet-polaron quenching.')
+    ssa = Quantity(type=np.float64, shape=['*'], description='singlet-singlet annihilation')        
+    sta = Quantity(type=np.float64, shape=['*'], description='singlet-triplet annihilation')
+    tpq = Quantity(type=np.float64, shape=['*'], description='triplet-polaron quenching')
+    tsa = Quantity(type=np.float64, shape=['*'], description='triplet-singlet annihilation')
+    tta = Quantity(type=np.float64, shape=['*'], description='triplet-triplet annihilation')
+    ttf = Quantity(type=np.float64, shape=['*'], description='triplet-triplet fusion')
+    radiative = Quantity(type=np.float64, shape=['*'], description='avg. no. of radiatively decayed photons')
+    thermal = Quantity(type=np.float64, shape=['*'], description='thermal quenching')    
+    photon = Quantity(type=np.float64, shape=['*'], description='number of photons created')
+    recombination = Quantity(type=np.float64, shape=['*'], description='avg. number of recombinations')
+    x_axis = Quantity(type=np.float64, shape=['*'], description='device length in nm.')
+    
 class Charge_density_average(MSection):
     m_def = Section(validate=False)
     value = Quantity(type=np.float64, shape=[3, '*'], description="""1st row is device length in nm, 

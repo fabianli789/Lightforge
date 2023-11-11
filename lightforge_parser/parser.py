@@ -140,6 +140,57 @@ def DetailedParser(filepath, archive):
                 if re.search(r'exciton_decay_density_average_\d+', file)  and 'all_data_points'  not in root:
                     sec_exciton_decay_density_average  = sec_particle_densities.m_create(Exciton_decay_density_average)              
                     file_exciton_decay_density_average =  yaml.safe_load(f)
+                    
+                    if 'CS' in file_exciton_decay_density_average['total']['annihilation']:
+                        _cs = file_exciton_decay_density_average['total']['annihilation']['CS']
+                        sec_exciton_decay_density_average.cs = _cs    
+                    if 'EET' in file_exciton_decay_density_average['total']['annihilation']:
+                        _eet = file_exciton_decay_density_average['total']['annihilation']['EET']
+                        sec_exciton_decay_density_average.eet = _eet
+                    if 'EPT' in file_exciton_decay_density_average['total']['annihilation']:
+                        _ept = file_exciton_decay_density_average['total']['annihilation']['EPT']
+                        sec_exciton_decay_density_average.ept = _ept                    
+                    if 'PTQ' in file_exciton_decay_density_average['total']['annihilation']:
+                        _ptq = file_exciton_decay_density_average['total']['annihilation']['PTQ']
+                        sec_exciton_decay_density_average.ptq = _ptq
+                    if 'SPQ' in file_exciton_decay_density_average['total']['annihilation']:
+                        _spq = file_exciton_decay_density_average['total']['annihilation']['SPQ']
+                        sec_exciton_decay_density_average.spq= _spq
+                    if 'SSA' in file_exciton_decay_density_average['total']['annihilation']:
+                        _ssa = file_exciton_decay_density_average['total']['annihilation']['SSA']
+                        sec_exciton_decay_density_average.ssa = _ssa
+                    if 'STA' in file_exciton_decay_density_average['total']['annihilation']:
+                        _sta = file_exciton_decay_density_average['total']['annihilation']['STA']
+                        sec_exciton_decay_density_average.sta = _sta
+                    if 'TPQ' in file_exciton_decay_density_average['total']['annihilation']:
+                        _tpq = file_exciton_decay_density_average['total']['annihilation']['TPQ']
+                        sec_exciton_decay_density_average.tpq = _tpq
+                    if 'TSA' in file_exciton_decay_density_average['total']['annihilation']:
+                        _tsa = file_exciton_decay_density_average['total']['annihilation']['TSA']
+                        sec_exciton_decay_density_average.tsa = _tsa 
+                    if 'TTA' in file_exciton_decay_density_average['total']['annihilation']:
+                        _tta = file_exciton_decay_density_average['total']['annihilation']['TTA']
+                        sec_exciton_decay_density_average.tta = _tta
+                    if 'TTF' in file_exciton_decay_density_average['total']['annihilation']:
+                        _ttf = file_exciton_decay_density_average['total']['annihilation']['TTF']
+                        sec_exciton_decay_density_average.ttf = _ttf
+                    if 'radiative' in file_exciton_decay_density_average['total']['annihilation']:
+                        _radiative = file_exciton_decay_density_average['total']['annihilation']['radiative']
+                        sec_exciton_decay_density_average.radiative = _radiative
+                    if 'thermal' in file_exciton_decay_density_average['total']['annihilation']:
+                        _thermal = file_exciton_decay_density_average['total']['annihilation']['thermal']
+                        sec_exciton_decay_density_average.thermal = _thermal
+                    if 'photon' in file_exciton_decay_density_average['total']['creation']:
+                        _photon = file_exciton_decay_density_average['total']['creation']['photon']
+                        sec_exciton_decay_density_average.photon = _photon
+                    if 'recombination' in file_exciton_decay_density_average['total']['creation']:
+                        _recombination = file_exciton_decay_density_average['total']['creation']['recombination']
+                        sec_exciton_decay_density_average.recombination = _recombination
+                    if 'x_axis' in file_exciton_decay_density_average:
+                        _x_axis = file_exciton_decay_density_average['x_axis']
+                        sec_exciton_decay_density_average.x_axis = _x_axis        
+        
+        
                 if re.search(r'photon_creation_densitiy_average_\d+', file) and 'all_data_points' not in root:
                     sec_photon_creation_density_average = sec_particle_densities.m_create(Photon_creation_density_average)
                     
