@@ -18,7 +18,7 @@
 import numpy as np
 from nomad.metainfo import MSection, Section, SubSection, Quantity, Package
 from nomad.datamodel.metainfo import simulation
-from nomad.datamodel import results, optimade
+from nomad.datamodel import results
 #from nomad.datamodel.metainfo.workflow import Workflow
 
 
