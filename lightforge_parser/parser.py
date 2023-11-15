@@ -5,7 +5,7 @@
 #
 #
 #
-#import yaml
+import yaml
 import os
 import re
 import datetime
@@ -137,7 +137,7 @@ def DetailedParser(filepath, archive):
                     value[1] = electrons
                     value[2] = holes  
                     sec_charge_density_average.value = value
-                '''
+                
                 if re.search(r'exciton_decay_density_average_\d+', file)  and 'all_data_points'  not in root:
                     sec_exciton_decay_density_average  = sec_particle_densities.m_create(Exciton_decay_density_average)              
                     file_exciton_decay_density_average =  yaml.safe_load(f)
@@ -190,7 +190,7 @@ def DetailedParser(filepath, archive):
                     if 'x_axis' in file_exciton_decay_density_average:
                         _x_axis = file_exciton_decay_density_average['x_axis']
                         sec_exciton_decay_density_average.x_axis = _x_axis        
-                    '''
+                    
         
                 if re.search(r'photon_creation_densitiy_average_\d+', file) and 'all_data_points' not in root:
                     sec_photon_creation_density_average = sec_particle_densities.m_create(Photon_creation_density_average)
@@ -254,7 +254,7 @@ class LightforgeParser():
     def parse(self, filepath, archive, logger):
         sec_program = archive.m_setdefault('run.program')
         sec_program.name = "Lightforge"
-
+        
         
         mainfile = Path(filepath)
         
