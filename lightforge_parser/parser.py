@@ -254,8 +254,9 @@ class LightforgeParser():
     def parse(self, filepath, archive, logger):
         sec_program = archive.m_setdefault('run.program')
         sec_program.name = "Lightforge"
-        
-        
+
+        sec_workflow = archive.m_create(Workflow)
+        sec_workflow.type = 'single_point'
         mainfile = Path(filepath)
         
         
