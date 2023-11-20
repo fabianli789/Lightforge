@@ -189,7 +189,7 @@ def DetailedParser(filepath, archive):
                         sec_exciton_decay_density_average.recombination = _recombination
                     if 'x_axis' in file_exciton_decay_density_average:
                         _x_axis = file_exciton_decay_density_average['x_axis']
-                        sec_exciton_decay_density_average.x_axis = _x_axis        
+                        sec_exciton_decay_density_average.x_axiss = _x_axis        
                     
         
                 if re.search(r'photon_creation_densitiy_average_\d+', file) and 'all_data_points' not in root:
@@ -255,8 +255,8 @@ class LightforgeParser():
         sec_program = archive.m_setdefault('run.program')
         sec_program.name = "Lightforge"
 
-        sec_workflow = archive.m_create(Workflow)
-        sec_workflow.type = 'single_point'
+#        sec_workflow = archive.m_create(Workflow)
+#        sec_workflow.type = 'single_point'
         mainfile = Path(filepath)
         
         
