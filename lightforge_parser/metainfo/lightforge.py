@@ -33,11 +33,11 @@ class Quenching_density_average(MSection):
 
 class Photon_creation_density_average(MSection):
     m_def = Section(validate=False)
-    value = Quantity(type=np.float64, shape=[3, '*'], description=("""1st row is device length in nm, 
+    value = Quantity(type=np.float64, shape=[3, '*'], description="""1st row is device length in nm, 
                                                                     2nd row is average number of emitted photons, 
                                                                     3rd row is average number of excitons created. 
                                                                     1st repeating subsection corresponds to the 1st 
-                                                                    electric field applied etc."""))
+                                                                    electric field applied etc.""")
 class Exciton_decay_density_average(MSection):
     m_def = Section(validate=False)
     
