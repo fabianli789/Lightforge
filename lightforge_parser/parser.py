@@ -101,6 +101,7 @@ def DetailedParser(filepath, archive):
                         value.append(line)
                     sec_mobility.value = np.array(value)
                 if re.search(r'mobilities_all_fields', file) and 'all_data_points' not in root:
+                    sec_mobility = sec_current_characteristics.m_create(Mobility)
                     for i, line in enumerate(f):
                         rows  = i +1 
                     d = np.zeros((rows, 3))
@@ -255,8 +256,8 @@ class LightforgeParser():
         sec_program = archive.m_setdefault('run.program')
         sec_program.name = "Lightforge"
 
-#        sec_workflow = archive.m_create(Workflow)
-#        sec_workflow.type = 'single_point'
+        sec_workflow = archive.m_create(Workflow)
+        sec_workflow.type = 'single_point'
         mainfile = Path(filepath)
         
         
