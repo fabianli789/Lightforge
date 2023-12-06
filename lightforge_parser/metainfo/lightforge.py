@@ -38,7 +38,7 @@ class Emitter_emitter_transport_count(MSection):
     foerster_s1t1 = Quantity(type=np.float64, shape=['*'])
     foerster_t1s1 = Quantity(type=np.float64, shape=['*'])
     foerster_t1t1 = Quantity(type=np.float64, shape=['*'])
-    x_axisss = Quantity(type=np.float64, shape=['*'])
+    x_axis = Quantity(type=np.float64, shape=['*'])
 class Exciton_molpairs(MSection):
     m_def = Section(validate=False)
     emitter_emitter_transport_count = SubSection(sub_section=Emitter_emitter_transport_count.m_def, repeats=False)

@@ -273,9 +273,9 @@ def DetailedParser(filepath, archive):
                     if 'foerster_T1T1' in file_emitter_emitter_transport_count:
                         _foerster_t1t1 = file_emitter_emitter_transport_count['foerster_T1T1']
                         sec_emitter_emitter_transport_count.foerster_t1t1 = _foerster_t1t1
-                    if 'x_axisss' in file_emitter_emitter_transport_count:
-                        _x_axisss = file_emitter_emitter_transport_count['x_axisss']
-                        sec_emitter_emitter_transport_count.x_axisss = _x_axisss                      
+                    if 'x_axis' in file_emitter_emitter_transport_count:
+                        _x_axis = file_emitter_emitter_transport_count['x_axis']
+                        sec_emitter_emitter_transport_count.x_axis = _x_axis                      
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):
