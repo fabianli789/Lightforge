@@ -140,7 +140,7 @@ def DetailedParser(filepath, archive):
                     sec_charge_density_average.value = value
                 
                 if re.search(r'exciton_decay_density_average_\d+', file)  and 'all_data_points'  not in root:
-                    sec_exciton_decay_density_average  = sec_particle_densities.m_create(Exciton_decay_density_average)              
+                    sec_exciton_decay_density_average  = sec_particle_densities.m_create(Exciton_decay_density_average)
                     file_exciton_decay_density_average =  yaml.safe_load(f)
                     
                     if 'CS' in file_exciton_decay_density_average['total']['annihilation']:
@@ -192,10 +192,9 @@ def DetailedParser(filepath, archive):
                         _x_axis = file_exciton_decay_density_average['x_axis']
                         sec_exciton_decay_density_average.x_axiss = _x_axis        
                     
-        
-                if re.search(r'photon_creation_densitiy_average_\d+', file) and 'all_data_points' not in root:
+                
+                if re.search(r'photon_creation_density_average_\d+', file) and 'all_data_points' not in root:
                     sec_photon_creation_density_average = sec_particle_densities.m_create(Photon_creation_density_average)
-                    
                     device_length = []
                     photons = []
                     excitons = []
@@ -219,6 +218,7 @@ def DetailedParser(filepath, archive):
                     value[2] = excitons
                     sec_photon_creation_density_average.value = value
                 if re.search(r'quenching_density_average_\d+', file) and 'all_data_points' not in root:
+                    print("LINE 223")
                     sec_quenching_density_average = sec_particle_densities.m_create(Quenching_density_average)
                     device_length = []
                     excitons_quenched = []

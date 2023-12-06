@@ -38,6 +38,7 @@ class Photon_creation_density_average(MSection):
                                                                     3rd row is average number of excitons created. 
                                                                     1st repeating subsection corresponds to the 1st 
                                                                     electric field applied etc.""")
+                                                                    
 class Exciton_decay_density_average(MSection):
     m_def = Section(validate=False)
     
@@ -82,7 +83,7 @@ class Mobility(MSection):
 class IV(MSection):
     m_def =  Section(validate=False)
     name = Quantity(type=str)
-    iv_all_fields = Quantity(type=np.float64, shape=['*,3'], description="""Voltage (in Volts) over 
+    iv_all_fields = Quantity(type=np.float64, shape=['*', 3], description="""Voltage (in Volts) over 
                                                                             current density (in mA/cm2).
                                                                             1st column is voltage, 3rd 
                                                                             column is current density.""")
