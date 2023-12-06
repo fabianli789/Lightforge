@@ -38,7 +38,7 @@ class Emitter_emitter_transport_count(MSection):
     foerster_s1t1 = Quantity(type=np.float64, shape=['*'])
     foerster_t1s1 = Quantity(type=np.float64, shape=['*'])
     foerster_t1t1 = Quantity(type=np.float64, shape=['*'])
-    x_axis = Quantity(type=np.float64, shape=['*'])
+    x_axiss = Quantity(type=np.float64, shape=['*'])
 class Exciton_molpairs(MSection):
     m_def = Section(validate=False)
     emitter_emitter_transport_count = SubSection(sub_section=Emitter_emitter_transport_count.m_def, repeats=False)
@@ -77,7 +77,7 @@ class Exciton_decay_density_average(MSection):
     thermal = Quantity(type=np.float64, shape=['*'], description='thermal quenching')    
     photon = Quantity(type=np.float64, shape=['*'], description='number of photons created')
     recombination = Quantity(type=np.float64, shape=['*'], description='avg. number of recombinations')
-    x_axis = Quantity(type=np.float64, shape=['*'], description='device length in nm.')
+    x_axis = Quantity(type=np.float64, shape=['*'], description='device length in nanometers.')
     
 class Charge_density_average(MSection):
     m_def = Section(validate=False)
