@@ -191,11 +191,6 @@ def DetailedParser(filepath, archive):
                     if 'x_axis' in file_exciton_decay_density_average:
                         _x_axis = file_exciton_decay_density_average['x_axis']
                         sec_exciton_decay_density_average.x_axis = _x_axis    
-
-
-
-    
-                    
                 
                 if re.search(r'photon_creation_density_average_\d+', file) and 'all_data_points' not in root:
                     sec_photon_creation_density_average = sec_particle_densities.m_create(Photon_creation_density_average)
@@ -257,8 +252,30 @@ def DetailedParser(filepath, archive):
                     if 'dexter_S1S1' in file_emitter_emitter_transport_count:
                         _dexter_s1s1 = file_emitter_emitter_transport_count['dexter_S1S1']
                         sec_emitter_emitter_transport_count.dexter_s1s1 = _dexter_s1s1
-                        
-
+                    if 'dexter_S1T1' in file_emitter_emitter_transport_count:
+                        _dexter_s1t1 = file_emitter_emitter_transport_count['dexter_S1T1']
+                        sec_emitter_emitter_transport_count.dexter_s1t1 = _dexter_s1t1
+                    if 'dexter_T1S1' in file_emitter_emitter_transport_count:
+                        _dexter_t1s1 = file_emitter_emitter_transport_count['dexter_T1S1']
+                        sec_emitter_emitter_transport_count.dexter_t1s1 = _dexter_t1s1
+                    if 'dexter_T1T1' in file_emitter_emitter_transport_count:
+                        _dexter_t1t1 = file_emitter_emitter_transport_count['dexter_T1T1']
+                        sec_emitter_emitter_transport_count.dexter_t1t1 = _dexter_t1t1
+                    if 'foerster_S1S1' in file_emitter_emitter_transport_count:
+                        _foerster_s1s1 = file_emitter_emitter_transport_count['foerster_S1S1']
+                        sec_emitter_emitter_transport_count.foerster_s1s1 = _foerster_s1s1
+                    if 'foerster_S1T1' in file_emitter_emitter_transport_count:
+                        _foerster_s1t1 = file_emitter_emitter_transport_count['foerster_S1T1']
+                        sec_emitter_emitter_transport_count.foerster_s1t1 = _foerster_s1t1
+                    if 'foerster_T1S1' in file_emitter_emitter_transport_count:
+                        _foerster_t1s1 = file_emitter_emitter_transport_count['foerster_T1S1']
+                        sec_emitter_emitter_transport_count.foerster_t1s1 = _foerster_t1s1
+                    if 'foerster_T1T1' in file_emitter_emitter_transport_count:
+                        _foerster_t1t1 = file_emitter_emitter_transport_count['foerster_T1T1']
+                        sec_emitter_emitter_transport_count.foerster_t1t1 = _foerster_t1t1
+                    if 'x_axis' in file_emitter_emitter_transport_count:
+                        _x_axis = file_emitter_emitter_transport_count['x_axis']
+                        sec_emitter_emitter_transport_count.x_axis = _x_axis                        
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):
