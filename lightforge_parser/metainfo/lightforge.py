@@ -23,6 +23,26 @@ from nomad.datamodel import results
 
 
 m_package = Package()
+
+class Host_emitter_transport_count(MSection):
+    m_def = Section(validate=False)
+
+
+class Emitter_emitter_transport_count(MSection):
+    m_def = Section(validate=False)
+    dexter_s1s1 = Quantity(type=np.float64, shape=['*'])
+    dexter_s1t1 = Quantity(type=np.float64, shape=['*'])
+    dexter_t1s1 = Quantity(type=np.float64, shape=['*'])
+    dexter_t1t1 = Quantity(type=np.float64, shape=['*'])
+    foerster_s1s1 = Quantity(type=np.float64, shape=['*'])
+    foerster_s1t1 = Quantity(type=np.float64, shape=['*'])
+    foerster_t1s1 = Quantity(type=np.float64, shape=['*'])
+    foerster_t1t1 = Quantity(type=np.float64, shape=['*'])
+    x_axis = Quantity(type=np.float64, shape=['*'])
+class Exciton_molpairs(MSection):
+    m_def = Section(validate=False)
+    emitter_emitter_transport_count = SubSection(sub_section=Emitter_emitter_transport_count.m_def, repeats=False)
+    host_emitter_transport_count = SubSection(sub_section=Host_emitter_transport_count.m_def, repeats=False)
 class Quenching_density_average(MSection):
     m_def = Section(validate=False)
     value = Quantity(type=np.float64, shape=[4, '*'], description="""1st row is device length in nm,
@@ -115,6 +135,7 @@ class Particle_densities(MSection):
     exciton_decay_density_average = SubSection(sub_section=Exciton_decay_density_average.m_def, repeats=True)
     photon_creation_density_average = SubSection(sub_section=Photon_creation_density_average.m_def, repeats=True)
     quenching_density_average = SubSection(sub_section=Quenching_density_average.m_def, repeats=True)
+    exciton_molpairs = SubSection(sub_section=Exciton_molpairs.m_def, repeats=False)
 class Current_characteristics(MSection):
     m_def = Section(validate=False)
     current_density = SubSection(sub_section=Current_density.m_def, repeats=True)    

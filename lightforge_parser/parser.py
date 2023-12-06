@@ -27,7 +27,7 @@ from .metainfo.lightforge import (
                             IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
                             Input, Mobility, Particle_densities, Charge_density_average, 
                             Exciton_decay_density_average, Photon_creation_density_average,
-                            Quenching_density_average)
+                            Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count)
 
 
 def DetailedParser(filepath, archive):
@@ -246,7 +246,13 @@ def DetailedParser(filepath, archive):
                     value[2] = electrons
                     value[3] = holes 
                     sec_quenching_density_average.value = value
-
+                if re.search(r'emitter_emitter_transport_count.yml', file) and 'all_data_points' not in root:
+                    sec_exciton_molpairs = sec_particle_densities.m_create(Exciton_molpairs)
+                    sec_emitter_emitter_transport_count = sec_exciton_molpairs.m_create(Emitter_emitter_transport_count)
+                    file_emitter_emitter_transport_count = yaml.safe_load(f)
+                    if 'dexter_S1S1' in file_emitter_emitter_transport_count:
+                        _dexter_s1s1 = file_emitter_emitter_transport_count['dexter_S1S1']
+                        sec_emitter_emitter_transport_count.dexter_s1s1 = _dexter_s1s1
                         
 
 class LightforgeParser():
