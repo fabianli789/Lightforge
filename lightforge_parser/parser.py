@@ -142,10 +142,7 @@ def DetailedParser(filepath, archive):
                 if re.search(r'exciton_decay_density_average_\d+', file)  and 'all_data_points'  not in root:
                     sec_exciton_decay_density_average  = sec_particle_densities.m_create(Exciton_decay_density_average)
                     file_exciton_decay_density_average =  yaml.safe_load(f)
-                    
-                    if 'x_axis' in file_exciton_decay_density_average:
-                        _x_axis = file_exciton_decay_density_average['x_axis']
-                        sec_exciton_decay_density_average.x_axis = _x_axis                        
+                                        
                     if 'CS' in file_exciton_decay_density_average['total']['annihilation']:
                         _cs = file_exciton_decay_density_average['total']['annihilation']['CS']
                         sec_exciton_decay_density_average.cs = _cs    
@@ -191,7 +188,9 @@ def DetailedParser(filepath, archive):
                     if 'recombination' in file_exciton_decay_density_average['total']['creation']:
                         _recombination = file_exciton_decay_density_average['total']['creation']['recombination']
                         sec_exciton_decay_density_average.recombination = _recombination
-
+                    if 'x_axis' in file_exciton_decay_density_average:
+                        _x_axis = file_exciton_decay_density_average['x_axis']
+                        sec_exciton_decay_density_average.x_axis = _x_axis    
 
 
 
