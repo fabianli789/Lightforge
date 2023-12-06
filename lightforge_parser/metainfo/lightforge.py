@@ -38,7 +38,7 @@ class Photon_creation_density_average(MSection):
                                                                     3rd row is average number of excitons created. 
                                                                     1st repeating subsection corresponds to the 1st 
                                                                     electric field applied etc.""")
-                                                                    
+
 class Exciton_decay_density_average(MSection):
     m_def = Section(validate=False)
     
@@ -57,7 +57,7 @@ class Exciton_decay_density_average(MSection):
     thermal = Quantity(type=np.float64, shape=['*'], description='thermal quenching')    
     photon = Quantity(type=np.float64, shape=['*'], description='number of photons created')
     recombination = Quantity(type=np.float64, shape=['*'], description='avg. number of recombinations')
-    x_axiss = Quantity(type=np.float64, shape=['*'], description='device length in nm.')
+    x_axis = Quantity(type=np.float64, shape=['*'], description='device length in nm.')
     
 class Charge_density_average(MSection):
     m_def = Section(validate=False)
