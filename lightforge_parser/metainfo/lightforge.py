@@ -24,8 +24,6 @@ from nomad.datamodel import results
 
 m_package = Package()
 
-class Host_emitter_transport_count(MSection):
-    m_def = Section(validate=False)
 
 
 class Emitter_emitter_transport_count(MSection):
@@ -39,10 +37,17 @@ class Emitter_emitter_transport_count(MSection):
     foerster_t1s1 = Quantity(type=np.float64, shape=['*'])
     foerster_t1t1 = Quantity(type=np.float64, shape=['*'])
     x_axis = Quantity(type=np.float64, shape=['*'])
+class Host_host_transport_count(Emitter_emitter_transport_count):
+    m_def = Section(validate=False)
+
+class Host_emitter_transport_count(Emitter_emitter_transport_count):
+    m_def = Section(validate=False)
+
 class Exciton_molpairs(MSection):
     m_def = Section(validate=False)
     emitter_emitter_transport_count = SubSection(sub_section=Emitter_emitter_transport_count.m_def, repeats=False)
-    host_emitter_transport_count = SubSection(sub_section=Host_emitter_transport_count.m_def, repeats=False)
+    host_emitter_transport_count = SubSection(sub_section=Host_emitter_transport_count.m_def, repeats=False)  # might be wrong
+    host_host_transport_count = SubSection(sub_section=Host_host_transport_count.m_def, repeats=False)
 class Quenching_density_average(MSection):
     m_def = Section(validate=False)
     value = Quantity(type=np.float64, shape=[4, '*'], description="""1st row is device length in nm,

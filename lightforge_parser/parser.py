@@ -27,7 +27,8 @@ from .metainfo.lightforge import (
                             IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
                             Input, Mobility, Particle_densities, Charge_density_average, 
                             Exciton_decay_density_average, Photon_creation_density_average,
-                            Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count)
+                            Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count,
+                            Host_emitter_transport_count, Host_host_transport_count)
 
 
 def DetailedParser(filepath, archive):
@@ -39,6 +40,7 @@ def DetailedParser(filepath, archive):
     
     sec_IQE2 = sec_current_characteristics.m_create(IQE2)
     sec_IV = sec_current_characteristics.m_create(IV)
+    exciton_molpairs_hasrun = False
     for root, dirs, files in sorted(os.walk(filepath.parent)):
         files = sorted(files)
         i = 0
@@ -47,7 +49,6 @@ def DetailedParser(filepath, archive):
                 files.remove(files[i])
             else:
                 i += 1    
-        
         for file in files:    
             with open(root +'/'+ file, 'rb') as f:
                 if 'current_density' in file and 'all_data_points' not in root:
@@ -245,37 +246,100 @@ def DetailedParser(filepath, archive):
                     value[2] = electrons
                     value[3] = holes 
                     sec_quenching_density_average.value = value
-                if re.search(r'emitter_emitter_transport_count.yml', file) and 'all_data_points' not in root:
-                    sec_exciton_molpairs = sec_particle_densities.m_create(Exciton_molpairs)
-                    sec_emitter_emitter_transport_count = sec_exciton_molpairs.m_create(Emitter_emitter_transport_count)
-                    file_emitter_emitter_transport_count = yaml.safe_load(f)
-                    if 'dexter_S1S1' in file_emitter_emitter_transport_count:
-                        _dexter_s1s1 = file_emitter_emitter_transport_count['dexter_S1S1']
-                        sec_emitter_emitter_transport_count.dexter_s1s1 = _dexter_s1s1
-                    if 'dexter_S1T1' in file_emitter_emitter_transport_count:
-                        _dexter_s1t1 = file_emitter_emitter_transport_count['dexter_S1T1']
-                        sec_emitter_emitter_transport_count.dexter_s1t1 = _dexter_s1t1
-                    if 'dexter_T1S1' in file_emitter_emitter_transport_count:
-                        _dexter_t1s1 = file_emitter_emitter_transport_count['dexter_T1S1']
-                        sec_emitter_emitter_transport_count.dexter_t1s1 = _dexter_t1s1
-                    if 'dexter_T1T1' in file_emitter_emitter_transport_count:
-                        _dexter_t1t1 = file_emitter_emitter_transport_count['dexter_T1T1']
-                        sec_emitter_emitter_transport_count.dexter_t1t1 = _dexter_t1t1
-                    if 'foerster_S1S1' in file_emitter_emitter_transport_count:
-                        _foerster_s1s1 = file_emitter_emitter_transport_count['foerster_S1S1']
-                        sec_emitter_emitter_transport_count.foerster_s1s1 = _foerster_s1s1
-                    if 'foerster_S1T1' in file_emitter_emitter_transport_count:
-                        _foerster_s1t1 = file_emitter_emitter_transport_count['foerster_S1T1']
-                        sec_emitter_emitter_transport_count.foerster_s1t1 = _foerster_s1t1
-                    if 'foerster_T1S1' in file_emitter_emitter_transport_count:
-                        _foerster_t1s1 = file_emitter_emitter_transport_count['foerster_T1S1']
-                        sec_emitter_emitter_transport_count.foerster_t1s1 = _foerster_t1s1
-                    if 'foerster_T1T1' in file_emitter_emitter_transport_count:
-                        _foerster_t1t1 = file_emitter_emitter_transport_count['foerster_T1T1']
-                        sec_emitter_emitter_transport_count.foerster_t1t1 = _foerster_t1t1
-                    if 'x_axis' in file_emitter_emitter_transport_count:
-                        _x_axis = file_emitter_emitter_transport_count['x_axis']
-                        sec_emitter_emitter_transport_count.x_axis = _x_axis                      
+                if 'exciton_molpairs' in root:
+                    if not exciton_molpairs_hasrun:
+                        sec_exciton_molpairs = sec_particle_densities.m_create(Exciton_molpairs)
+                        exciton_molpairs_hasrun = True   
+                    if re.search(r'host_emitter_transport_count', file) and 'all_data_points' not in root:
+                        sec_host_emitter_transport_count = sec_exciton_molpairs.m_create(Host_emitter_transport_count) # might be wrong
+                        file_host_emitter_transport_count = yaml.safe_load(f)
+                        if 'dexter_S1S1' in file_host_emitter_transport_count:
+                            _dexter_s1s1 = file_host_emitter_transport_count['dexter_S1S1']
+                            sec_host_emitter_transport_count.dexter_s1s1 = _dexter_s1s1
+                        if 'dexter_S1T1' in file_host_emitter_transport_count:
+                            _dexter_s1t1 = file_host_emitter_transport_count['dexter_S1T1']
+                            sec_host_emitter_transport_count.dexter_s1t1 = _dexter_s1t1
+                        if 'dexter_T1S1' in file_host_emitter_transport_count:
+                            _dexter_t1s1 = file_host_emitter_transport_count['dexter_T1S1']
+                            sec_host_emitter_transport_count.dexter_t1s1 = _dexter_t1s1
+                        if 'dexter_T1T1' in file_host_emitter_transport_count:
+                            _dexter_t1t1 = file_host_emitter_transport_count['dexter_T1T1']
+                            sec_host_emitter_transport_count.dexter_t1t1 = _dexter_t1t1
+                        if 'foerster_S1S1' in file_host_emitter_transport_count:
+                            _foerster_s1s1 = file_host_emitter_transport_count['foerster_S1S1']
+                            sec_host_emitter_transport_count.foerster_s1s1 = _foerster_s1s1
+                        if 'foerster_S1T1' in file_host_emitter_transport_count:
+                            _foerster_s1t1 = file_host_emitter_transport_count['foerster_S1T1']
+                            sec_host_emitter_transport_count.foerster_s1t1 = _foerster_s1t1
+                        if 'foerster_T1S1' in file_host_emitter_transport_count:
+                            _foerster_t1s1 = file_host_emitter_transport_count['foerster_T1S1']
+                            sec_host_emitter_transport_count.foerster_t1s1 = _foerster_t1s1
+                        if 'foerster_T1T1' in file_host_emitter_transport_count:
+                            _foerster_t1t1 = file_host_emitter_transport_count['foerster_T1T1']
+                            sec_host_emitter_transport_count.foerster_t1t1 = _foerster_t1t1
+                        if 'x_axis' in file_host_emitter_transport_count:
+                            _x_axis = file_host_emitter_transport_count['x_axis']
+                            sec_host_emitter_transport_count.x_axis = _x_axis                                         
+                    if re.search(r'emitter_emitter_transport_count.yml', file) and 'all_data_points' not in root:
+                        sec_emitter_emitter_transport_count = sec_exciton_molpairs.m_create(Emitter_emitter_transport_count)
+                        file_emitter_emitter_transport_count = yaml.safe_load(f)
+                        if 'dexter_S1S1' in file_emitter_emitter_transport_count:
+                            _dexter_s1s1 = file_emitter_emitter_transport_count['dexter_S1S1']
+                            sec_emitter_emitter_transport_count.dexter_s1s1 = _dexter_s1s1
+                        if 'dexter_S1T1' in file_emitter_emitter_transport_count:
+                            _dexter_s1t1 = file_emitter_emitter_transport_count['dexter_S1T1']
+                            sec_emitter_emitter_transport_count.dexter_s1t1 = _dexter_s1t1
+                        if 'dexter_T1S1' in file_emitter_emitter_transport_count:
+                            _dexter_t1s1 = file_emitter_emitter_transport_count['dexter_T1S1']
+                            sec_emitter_emitter_transport_count.dexter_t1s1 = _dexter_t1s1
+                        if 'dexter_T1T1' in file_emitter_emitter_transport_count:
+                            _dexter_t1t1 = file_emitter_emitter_transport_count['dexter_T1T1']
+                            sec_emitter_emitter_transport_count.dexter_t1t1 = _dexter_t1t1
+                        if 'foerster_S1S1' in file_emitter_emitter_transport_count:
+                            _foerster_s1s1 = file_emitter_emitter_transport_count['foerster_S1S1']
+                            sec_emitter_emitter_transport_count.foerster_s1s1 = _foerster_s1s1
+                        if 'foerster_S1T1' in file_emitter_emitter_transport_count:
+                            _foerster_s1t1 = file_emitter_emitter_transport_count['foerster_S1T1']
+                            sec_emitter_emitter_transport_count.foerster_s1t1 = _foerster_s1t1
+                        if 'foerster_T1S1' in file_emitter_emitter_transport_count:
+                            _foerster_t1s1 = file_emitter_emitter_transport_count['foerster_T1S1']
+                            sec_emitter_emitter_transport_count.foerster_t1s1 = _foerster_t1s1
+                        if 'foerster_T1T1' in file_emitter_emitter_transport_count:
+                            _foerster_t1t1 = file_emitter_emitter_transport_count['foerster_T1T1']
+                            sec_emitter_emitter_transport_count.foerster_t1t1 = _foerster_t1t1
+                        if 'x_axis' in file_emitter_emitter_transport_count:
+                            _x_axis = file_emitter_emitter_transport_count['x_axis']
+                            sec_emitter_emitter_transport_count.x_axis = _x_axis
+                    if re.search(r'host_host_transport_count.yml', file) and 'all_data_points' not in root:
+                        sec_host_host_transport_count = sec_exciton_molpairs.m_create(Host_host_transport_count)
+                        file_host_host_transport_count = yaml.safe_load(f)
+                        if 'dexter_S1S1' in file_host_host_transport_count:
+                            _dexter_s1s1 = file_host_host_transport_count['dexter_S1S1']
+                            sec_host_host_transport_count.dexter_s1s1 = _dexter_s1s1 
+                        if 'dexter_S1T1' in file_host_host_transport_count:
+                            _dexter_s1t1 = file_host_host_transport_count['dexter_S1T1']
+                            sec_host_host_transport_count.dexter_s1t1 = _dexter_s1t1
+                        if 'dexter_T1S1' in file_host_host_transport_count:
+                            _dexter_t1s1 = file_host_host_transport_count['dexter_T1S1']
+                            sec_host_host_transport_count.dexter_t1s1 = _dexter_t1s1
+                        if 'dexter_T1T1' in file_host_host_transport_count:
+                            _dexter_t1t1 = file_host_host_transport_count['dexter_T1T1']
+                            sec_host_host_transport_count.dexter_t1t1 = _dexter_t1t1
+                        if 'foerster_S1S1' in file_host_host_transport_count:
+                            _foerster_s1s1 = file_host_host_transport_count['foerster_S1S1']
+                            sec_host_host_transport_count.foerster_s1s1 = _foerster_s1s1
+                        if 'foerster_S1T1' in file_host_host_transport_count:
+                            _foerster_s1t1 = file_host_host_transport_count['foerster_S1T1']
+                            sec_host_host_transport_count.foerster_s1t1 = _foerster_s1t1
+                        if 'foerster_T1S1' in file_host_host_transport_count:
+                            _foerster_t1s1 = file_host_host_transport_count['foerster_T1S1']
+                            sec_host_host_transport_count.foerster_t1s1 = _foerster_t1s1
+                        if 'foerster_T1T1' in file_host_host_transport_count:
+                            _foerster_t1t1 = file_host_host_transport_count['foerster_T1T1']
+                            sec_host_host_transport_count.foerster_t1t1 = _foerster_t1t1
+                        if 'x_axis' in file_host_host_transport_count:
+                            _x_axis = file_host_host_transport_count['x_axis']
+                            sec_host_host_transport_count.x_axis = _x_axis
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):
