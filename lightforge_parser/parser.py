@@ -28,13 +28,15 @@ from .metainfo.lightforge import (
                             Input, Mobility, Particle_densities, Charge_density_average, 
                             Exciton_decay_density_average, Photon_creation_density_average,
                             Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count,
-                            Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis, Event_counts_by_type)
+                            Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis, Event_counts_by_type, Device_data, Electrodes, Energy_levels,
+                            Exciton_separation, Foerster, Site_energies, Mol_types, Coordinates) 
 
 
 def DetailedParser(filepath, archive):
     sec_run = archive.m_create(Run)
     sec_calc = sec_run.m_create(Calculation)
     sec_experiments =  sec_calc.m_create(Experiments)
+    sec_material = sec_calc.m_create(Material)
     sec_current_characteristics = sec_experiments.m_create(Current_characteristics)
     sec_particle_densities = sec_experiments.m_create(Particle_densities)
     
@@ -42,6 +44,8 @@ def DetailedParser(filepath, archive):
     sec_IV = sec_current_characteristics.m_create(IV)
     exciton_molpairs_hasrun = False
     runtime_analysis_hasrun = False
+    device_data_hasrun= False
+    foerster_hasrun = False
     for root, dirs, files in sorted(os.walk(filepath.parent)):
         natsort = lambda s: [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s)]
         
@@ -402,6 +406,21 @@ def DetailedParser(filepath, archive):
                                 sec_event_counts_by_type.spin_flip_exc = float(parts[1])
                             if 'thermal_decay' in line:
                                 sec_event_counts_by_type.thermal_decay = float(parts[1])
+                if 'device_data' in root:
+                    if not device_data_hasrun:
+                        sec_device_data = sec_material.m_create(Device_data)
+                        device_data_hasrun = True
+                    
+                    if re.search(r'coord_\d+', file) and 'all_data_points' not in root:
+                        sec_coordinates = sec_device_data.m_create(Coordinates)
+                        _coordinates = []
+                        for i, line in enumerate(f):
+                            parts = line.split()
+                            parts = [float(p) for p in parts]
+                            _coordinates.append(parts) 
+                        sec_coordinates.coordinates = _coordinates      
+
+
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):

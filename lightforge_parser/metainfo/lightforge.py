@@ -24,8 +24,36 @@ from nomad.datamodel import results
 
 m_package = Package()
 
+class Site_energies(MSection):
+    m_def = Section(validate=False)
+    site_energies = Quantity(type=np.float64, shape=['*', 2])
+
+class Mol_types(MSection):
+    m_def = Section(validate=False)
+    mol_types = Quantity(type=np.float64, shape=['*'])
+
+class Coordinates(MSection):
+    m_def = Section(validate=False)
+    coordinates = Quantity(type=np.float64, shape=['*', 3])
 
 
+class Device_data(MSection):
+    m_def = Section(validate=False)
+    coordinates = SubSection(sub_section=Coordinates.m_def, repeats=True)
+    mol_types = SubSection(sub_section=Mol_types.m_def, repeats=True)
+    site_energies = SubSection(sub_section=Site_energies.m_def, repeats=True)
+class Electrodes(MSection):
+    m_def = Section(validate=False)
+
+class Energy_levels(MSection):
+    m_def = Section(validate=False)
+
+class Exciton_separation(MSection):
+    m_def = Section(validate=False)
+
+class Foerster(MSection):
+    m_def = Section(validate=False)
+    
 class Emitter_emitter_transport_count(MSection):
     m_def = Section(validate=False)
     dexter_s1s1 = Quantity(type=np.float64, shape=['*'])
@@ -180,7 +208,11 @@ class Experiments(MSection):
     runtime_analysis = SubSection(sub_section=Runtime_analysis.m_def, repeats=False)
 class Material(MSection):
     m_def = Section(validate=False)
-    
+    device_data = SubSection(sub_section=Device_data.m_def, repeats=False)
+    electrodes = SubSection(sub_section=Electrodes.m_def, repeats=False)
+    energy_levels = SubSection(sub_section=Energy_levels.m_def, repeats=False)
+    exciton_separation = SubSection(sub_section=Exciton_separation.m_def, repeats=False)
+    foerster = SubSection(sub_section=Foerster.m_def, repeats=False)
 class Input(MSection):
     m_def = Section(validate=False)
 
