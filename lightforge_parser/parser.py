@@ -28,7 +28,7 @@ from .metainfo.lightforge import (
                             Input, Mobility, Particle_densities, Charge_density_average, 
                             Exciton_decay_density_average, Photon_creation_density_average,
                             Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count,
-                            Host_emitter_transport_count, Host_host_transport_count)
+                            Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis, Event_counts_by_type)
 
 
 def DetailedParser(filepath, archive):
@@ -41,8 +41,11 @@ def DetailedParser(filepath, archive):
     sec_IQE2 = sec_current_characteristics.m_create(IQE2)
     sec_IV = sec_current_characteristics.m_create(IV)
     exciton_molpairs_hasrun = False
+    runtime_analysis_hasrun = False
     for root, dirs, files in sorted(os.walk(filepath.parent)):
-        files = sorted(files)
+        natsort = lambda s: [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s)]
+        
+        files = sorted(files, key = natsort)
         i = 0
         while i < len(files):
             if '.png' in files[i] or '.npz' in files[i]:
@@ -50,7 +53,7 @@ def DetailedParser(filepath, archive):
             else:
                 i += 1    
         for file in files:    
-            with open(root +'/'+ file, 'rb') as f:
+            with open(root +'/'+ file, 'r') as f:
                 if 'current_density' in file and 'all_data_points' not in root:
                     sec_current_density = sec_current_characteristics.m_create(Current_density)
                     value = []
@@ -340,6 +343,65 @@ def DetailedParser(filepath, archive):
                         if 'x_axis' in file_host_host_transport_count:
                             _x_axis = file_host_host_transport_count['x_axis']
                             sec_host_host_transport_count.x_axis = _x_axis
+                
+                if 'runtime_analysis' in root:
+                    
+                    if not runtime_analysis_hasrun:    
+                        sec_runtime_analysis = sec_experiments.m_create(Runtime_analysis)
+                        runtime_analysis_hasrun = True
+                    if re.search(r'event_counts_by_type_\d+', file) and not 'all_data_points' in root:
+                        sec_event_counts_by_type = sec_runtime_analysis.m_create(Event_counts_by_type)
+                        for i, line in enumerate(f):
+                            line = line.lower()
+                            parts = line.split(': ')
+                            if 'dexter eeq' in line:
+                                sec_event_counts_by_type.dexter_eeq = float(parts[1])
+                            if 'dexter ept' in line:
+                                sec_event_counts_by_type.dexter_ept = float(parts[1])
+                            if 'spq' in line:
+                                sec_event_counts_by_type.spq = float(parts[1])       
+                            if 'sta' in line:
+                                sec_event_counts_by_type.sta = float(parts[1])
+                            if 'tpq' in line:
+                                sec_event_counts_by_type.tpq = float(parts[1])
+                            if 'tta' in line:
+                                sec_event_counts_by_type.tta = float(parts[1])
+                            if 'ttf' in line:
+                                sec_event_counts_by_type.ttf = float(parts[1])
+                            if 'eject chg' in line:
+                                sec_event_counts_by_type.eject_chg = float(parts[1])
+                            if 'inject e' in line:
+                                sec_event_counts_by_type.inject_e = float(parts[1])
+                            if 'inject h' in line:
+                                sec_event_counts_by_type.inject_h = float(parts[1])
+                            if 'move chg' in line:
+                                sec_event_counts_by_type.move_chg = float(parts[1])
+                            if 'move exc dexter' in line:
+                                sec_event_counts_by_type.move_exc_dexter = float(parts[1])
+                            if 'move exc foerster' in line:
+                                sec_event_counts_by_type.move_exc_foerster = float(parts[1])
+                            if 'move+flip exc dexter' in line:
+                                sec_event_counts_by_type.move_flip_exc_dexter = float(parts[1])
+                            if 'move+flip exc foerster' in line:
+                                sec_event_counts_by_type.move_flip_exc_foerster = float(parts[1])
+                            if 'prtclrst' in line:
+                                sec_event_counts_by_type.prtclRst = float(parts[1])
+                            if 'rad decay' in line:
+                                sec_event_counts_by_type.rad_decay = float(parts[1])
+                            if 'recombination s1' in line:
+                                sec_event_counts_by_type.recombination_s1 = float(parts[1])
+                            if 'recombination t1' in line:
+                                sec_event_counts_by_type.recombination_t1 = float(parts[1])
+                            if 'seperate eh' in line:
+                                sec_event_counts_by_type.seperate_eh = float(parts[1])
+                            if 'seperate he' in line:
+                                sec_event_counts_by_type.seperate_he = float(parts[1])
+                            if 'setmult' in line:
+                                sec_event_counts_by_type.setMult = float(parts[1])
+                            if 'spin flip exc' in line:
+                                sec_event_counts_by_type.spin_flip_exc = float(parts[1])
+                            if 'thermal_decay' in line:
+                                sec_event_counts_by_type.thermal_decay = float(parts[1])
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):

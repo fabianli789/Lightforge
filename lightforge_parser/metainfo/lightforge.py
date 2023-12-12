@@ -134,6 +134,27 @@ class Current_density(MSection):
                                                                    with subsection "0" being the first 
                                                                    electric field.""")
 
+class Event_counts_by_type(Exciton_decay_density_average):
+    m_def = Section(validate=False)
+    dexter_eeq = Quantity(type=np.float64)
+    dexter_ept = Quantity(type=np.float64)
+    eject_chg = Quantity(type=np.float64)
+    inject_e = Quantity(type=np.float64)
+    inject_h = Quantity(type=np.float64)
+    move_chg = Quantity(type=np.float64)
+    move_exc_dexter = Quantity(type=np.float64)
+    move_exc_foerster = Quantity(type=np.float64)
+    move_flip_exc_dexter = Quantity(type=np.float64)
+    move_flip_exc_foerster = Quantity(type=np.float64)
+    prtclRst = Quantity(type=np.float64)
+    rad_decay = Quantity(type=np.float64)
+    recombination_s1 = Quantity(type=np.float64)
+    recombination_t1 = Quantity(type=np.float64)
+    seperate_eh = Quantity(type=np.float64)
+    seperate_he = Quantity(type=np.float64)
+    setMult = Quantity(type=np.float64)
+    spin_flip_exc = Quantity(type=np.float64)
+    thermal_decay = Quantity(type=np.float64)
 class Particle_densities(MSection):
     m_def = Section(validate=False)
     charge_density_average = SubSection(sub_section=Charge_density_average.m_def, repeats=True)
@@ -147,10 +168,16 @@ class Current_characteristics(MSection):
     IQE2 = SubSection(sub_section=IQE2.m_def, repeats=False)
     IV = SubSection(sub_section=IV.m_def, repeats=False)
     mobility = SubSection(sub_section=Mobility.m_def, repeats=True)
+
+class Runtime_analysis(MSection):
+    m_def = Section(validate=False)
+    event_counts_by_type = SubSection(sub_section=Event_counts_by_type.m_def, repeats=True)
+
 class Experiments(MSection):
     m_def = Section(validate=False)
     current_characteristics = SubSection(sub_section=Current_characteristics.m_def, repeats=False)
     particle_densities = SubSection(sub_section=Particle_densities.m_def, repeats=False)
+    runtime_analysis = SubSection(sub_section=Runtime_analysis.m_def, repeats=False)
 class Material(MSection):
     m_def = Section(validate=False)
     
