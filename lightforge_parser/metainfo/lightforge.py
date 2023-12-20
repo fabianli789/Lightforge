@@ -234,8 +234,95 @@ class Material(MSection):
     energy_levels = SubSection(sub_section=Energy_levels.m_def, repeats=False)
     exciton_separation = SubSection(sub_section=Exciton_separation.m_def, repeats=False)
     foerster = SubSection(sub_section=Foerster.m_def, repeats=False)
+
+class Layers(MSection):
+    m_def = Section(validate=False)
+
+    lf_thickness = Quantity(type=np.float64)
+    morphology_input_mode = Quantity(type=str)
+    lf_material = Quantity(type=str, shape=['*', '*'], description='''Indicates what type of material this layer is made of (host, emitter etc) and its concentration 
+                                                                    with 1.0 being max concentration.''')
+class Pair_input(MSection):
+    m_def = Section(validate=False)
+    
+    molecule_1_type = Quantity(type=str)
+    molecule_2_type = Quantity(type=str)
+    hole_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
+    hole_transfer_ingetrals_maximum_ti = Quantity(type=np.float64)
+    electron_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
+    electron_transfer_integrals_maximum_ti = Quantity(type=np.float64)
+    dexter_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
+    dexter_transfer_integrals_maximum_ti = Quantity(type=np.float64)
+    
+    lf_QP_output = Quantity(type=str)
+class LF_materials(MSection):
+    m_def = Section(validate=False)
+    
+    name = Quantity(type=str, description='Name of the material.')
+    exciton_preset = Quantity(type=str)
+    lf_energies = Quantity(type=np.float64, shape=[2], description='1st value is HOMO in eV, 2nd one is LUMO in eV.')
+    lf_sigma = Quantity(type=np.float64, shape=[2], description='1st value is HOMO disorder in eV, 2nd value is LUMO disorder in eV.')
+    lf_lambda = Quantity(type=np.float64, shape=[2], description='1st value is HOMO reorganization energy in eV, 2nd value is LUMO reorganziation energy in eV.')
+class Settings(MSection):
+    m_def = Section(validate=False)
+    
+    pbc = Quantity(type=str)
+    excitonics = Quantity(type=str)
+    connect_electrodes = Quantity(type=str)
+    coulomb_mesh = Quantity(type=str)
+    particles_holes = Quantity(type=str)
+    particles_electrons = Quantity(type=str)
+    particles_excitons = Quantity(type=str)
+    morphology_width = Quantity(type=np.float64)
+    input_mode_transport = Quantity(type=str, description='''QP = QuantumPatch, PAR = parametric, eaip = Electron Affinity/Ionozation Potential, sig = sigma = energy disorder,
+                                                            l = lambda = reorganziation energy.''')
+    
+    
+    
+    materials_host_exciton_preset = Quantity(type=str)
+    materials_host_energies = Quantity(type=np.float64, shape=[2], description='1st value is HOMO in eV, 2nd one is LUMO in eV. For the host material.')
+    materials_host_sigma = Quantity(type=np.float64, shape=[2], description='1st value is HOMO disorder in eV, 2nd value is LUMO disorder in eV. For the host material.')
+    materials_host_lambda = Quantity(type=np.float64, shape=[2], description='''1st value is HOMO reorganization energy in eV, 2nd value is LUMO reorganization energy in eV.
+                                                                                For the host material.''')
+    materials_emitter_energies = Quantity(type=np.float64, shape=[2], description='1st value is HOMO in eV, 2nd one is LUMO in eV. For the emitter material.')
+    materials_emitter_sigma = Quantity(type=np.float64, shape=[2], description='1st value is HOMO disorder in eV, 2nd value is LUMO disorder in eV. For the emitter material.')
+    materials_emitter_lambda = Quantity(type=np.float64, shape=[2], description='''1st value is HOMO reorganization energy in eV, 2nd value is LUMO reogranziation energy in eV.
+                                                                                For the emitter material.''')
+    lf_neighbours = Quantity(type=np.float64)
+    transfer_integral_source = Quantity(type=str)
+    electrode_workfunction = Quantity(type=np.float64, shape=[2], description='''1st value is workfunction in eV of the electrode that is attached before the layer
+                                                                                 that was defined first (defined under settings.layers.lf_material). 2nd electrode
+                                                                                 is attached after the last layer.''')
+    electrode_coupling_model = Quantity(type=str, shape=[2])
+    electrode_wf_decay_length = Quantity(type=np.float64, shape=[2])
+    electrode_coupling = Quantity(type=np.float64, shape=[2])
+    lf_simulations = Quantity(type=int, description='number of simulation runs.')
+    lf_measurement = Quantity(type=str)
+    lf_temperature = Quantity(type=np.float64, shape=['*'])
+    lf_field_direction = Quantity(type=np.float64, shape=['*'])
+    lf_field_strength = Quantity(type=np.float64, shape=['*'], description='array for applied electric fields in V/nm.')
+    lf_initial_holes = Quantity(type=int)
+    lf_initial_electrons = Quantity(type=int)
+    lf_iv_fluctuation = Quantity(type=np.float64, description='iv-fluctuation as convergence criterion.')
+    lf_max_iterations = Quantity(type=int, description='max number of iterations as convergence criterion.')
+    
+    lf_ti_prune = Quantity(type=str)
+    lf_expansion_scheme = Quantity(type=str)
+    lf_qp_output_files_name = Quantity(type=str, description='files from Nanomatch GmbH software "QuantumPatch" (qp) are used.')
+    lf_qp_output_files_output_zip = Quantity(type=str)
+    lf_molecule_pdb = Quantity(type=str, description='name of file that provides data about the molecules.')
+    qp_output_sigma = Quantity(type=str)
+    qp_output_eaip = Quantity(type=str)
+    lf_rates = Quantity(type=str)
+    lf_superexchange = Quantity(type=str)
+    lf_epsilon_material = Quantity(type=np.float64)
+
+    pair_input = SubSection(sub_section=Pair_input.m_def, repeats=True)
+    layers = SubSection(sub_section=Layers.m_def, repeats=True)
+    materials = SubSection(sub_section=LF_materials.m_def, repeats=True)
 class Input(MSection):
     m_def = Section(validate=False)
+    settings = SubSection(sub_section=Settings.m_def, repeats=False)
 
 class LightforgeCalculation(simulation.calculation.Calculation):
     m_def = Section(validate=False, extends_base_section=True)    

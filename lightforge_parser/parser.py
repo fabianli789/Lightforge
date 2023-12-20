@@ -26,7 +26,7 @@ from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
 from .metainfo.lightforge import (
                             IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
-                            Input, Mobility, Particle_densities, Charge_density_average, 
+                            Input, Settings, Layers, Pair_input, LF_materials, Mobility, Particle_densities, Charge_density_average, 
                             Exciton_decay_density_average, Photon_creation_density_average,
                             Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count,
                             Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis, Event_counts_by_type, Device_data, Electrodes, Energy_levels,
@@ -474,7 +474,7 @@ def DetailedParser(filepath, archive):
                         sec_dexter_and_foerster.values = _values
                     if re.search(r'foerster_expansion_errors', file) and 'all_data_points' not in root:
                         sec_foerster_expansion_errors = sec_foerster.m_create(Foerster_expansion_errors)
-                        print("LINE 477: foerster expansion errorrs")
+                        
                         for i, line in enumerate(f):
                             parts = line.split(': ')
                             if 'S1S1_0_0' in line:
