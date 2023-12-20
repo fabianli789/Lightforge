@@ -65,9 +65,14 @@ class Foerster_expansion_errors(MSection):
     t1t1_1_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
     s1t1_1_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
     t1s1_1_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+
+class Dexter_and_foerster(MSection):
+    m_def = Section(validate=False)
+    values = Quantity(type=np.float64, shape=['*', 2], description='1st row is rate in 1/s, 2nd row is pair distance in nm.')
+
 class Foerster(MSection):
     m_def = Section(validate=False)
-    
+    dexter_and_foerster = SubSection(sub_section=Dexter_and_foerster.m_def, repeats=True)
     foerster_expansion_errors = SubSection(sub_section=Foerster_expansion_errors.m_def, repeats=False)
 class Emitter_emitter_transport_count(MSection):
     m_def = Section(validate=False)

@@ -30,7 +30,7 @@ from .metainfo.lightforge import (
                             Exciton_decay_density_average, Photon_creation_density_average,
                             Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count,
                             Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis, Event_counts_by_type, Device_data, Electrodes, Energy_levels,
-                            Exciton_separation, Foerster, Site_energies, Mol_types, Coordinates) 
+                            Exciton_separation, Foerster, Site_energies, Mol_types, Coordinates, Dexter_and_foerster) 
 
 
 def DetailedParser(filepath, archive):
@@ -453,8 +453,15 @@ def DetailedParser(filepath, archive):
                     if not foerster_hasrun:
                         sec_foerster = sec_material.m_create(Foerster)
                         foerster_hasrun = True
-                    if re.search(r'Dexter_\d+_') or re.search(r'[a-zA-Z]+\d[a-zA-Z]\d_'):
-                        pass        
+                    if re.search(r'Dexter_\d+_', file) or re.search(r'[a-zA-Z]+\d[a-zA-Z]\d_', file):
+                        sec_dexter_and_foerster = sec_foerster.m_create(Dexter_and_foerster)
+                        _values = []
+                        for i, line in enumerate(f):
+                            parts = line.split()
+                            parts = [float(x) for x in parts]
+                            _values.append(parts)
+                        sec_dexter_and_foerster.values = _values
+
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):
