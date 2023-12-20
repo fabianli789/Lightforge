@@ -472,8 +472,9 @@ def DetailedParser(filepath, archive):
                             _values.append(parts)
                         sec_dexter_and_foerster.name = file
                         sec_dexter_and_foerster.values = _values
-                    if re.search(r'foerster_expansion_errors', line) and 'all_data_points' not in root:
+                    if re.search(r'foerster_expansion_errors', file) and 'all_data_points' not in root:
                         sec_foerster_expansion_errors = sec_foerster.m_create(Foerster_expansion_errors)
+                        print("LINE 477: foerster expansion errorrs")
                         for i, line in enumerate(f):
                             parts = line.split(': ')
                             if 'S1S1_0_0' in line:
