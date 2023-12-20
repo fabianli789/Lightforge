@@ -30,7 +30,7 @@ from .metainfo.lightforge import (
                             Exciton_decay_density_average, Photon_creation_density_average,
                             Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count,
                             Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis, Event_counts_by_type, Device_data, Electrodes, Energy_levels,
-                            Exciton_separation, Foerster, Site_energies, Mol_types, Coordinates, Dexter_and_foerster) 
+                            Exciton_separation, Foerster, Site_energies, Mol_types, Coordinates, Dexter_and_foerster, Foerster_expansion_errors) 
 
 
 def DetailedParser(filepath, archive):
@@ -360,6 +360,11 @@ def DetailedParser(filepath, archive):
                         runtime_analysis_hasrun = True
                     if re.search(r'event_counts_by_type_\d+', file) and not 'all_data_points' in root:
                         sec_event_counts_by_type = sec_runtime_analysis.m_create(Event_counts_by_type)
+                        _spq = []
+                        _sta = []
+                        _tpq = []
+                        _tta = []
+                        _ttf = []
                         for i, line in enumerate(f):
                             line = line.lower()
                             parts = line.split(': ')
@@ -368,7 +373,8 @@ def DetailedParser(filepath, archive):
                             if 'dexter ept' in line:
                                 sec_event_counts_by_type.dexter_ept = float(parts[1])
                             if 'spq' in line:
-                                sec_event_counts_by_type.spq = float(parts[1])       
+                                _spq.append(float(parts[1]))
+                                sec_event_counts_by_type.spq = _spq       
                             if 'sta' in line:
                                 sec_event_counts_by_type.sta = float(parts[1])
                             if 'tpq' in line:
@@ -461,7 +467,42 @@ def DetailedParser(filepath, archive):
                             parts = [float(x) for x in parts]
                             _values.append(parts)
                         sec_dexter_and_foerster.values = _values
-
+                    if re.search(r'foerster_expansion_errors', line) and 'all_data_points' not in root:
+                        sec_foerster_expansion_errors = sec_foerster.m_create(Foerster_expansion_errors)
+                        for i, line in enumerate(f):
+                            parts = line.split(': ')
+                            if 'S1S1_0_0' in line:
+                                sec_foerster_expansion_errors.s1s1_0_0 = float(parts[2])
+                            if 'T1T1_0_0' in line:
+                                sec_foerster_expansion_errors.t1t1_0_0 = float(parts[2])
+                            if 'S1T1_0_0' in line:
+                                sec_foerster_expansion_errors.s1t1_0_0 = float(parts[2])
+                            if 'T1S1_0_0' in line:
+                                sec_foerster_expansion_errors.t1s1_0_0 = float(parts[2])
+                            if 'S1S1_0_1' in line:
+                                sec_foerster_expansion_errors.s1s1_0_1 = float(parts[2])
+                            if 'T1T1_0_1' in line:
+                                sec_foerster_expansion_errors.t1t1_0_1 = float(parts[2])
+                            if 'S1T1_0_1' in line:
+                                sec_foerster_expansion_errors.s1t1_0_1 = float(parts[2])
+                            if 'T1S1_0_1' in line:
+                                sec_foerster_expansion_errors.t1s1_0_1 = float(parts[2])
+                            if 'S1S1_1_0' in line:
+                                sec_foerster_expansion_errors.s1s1_1_0 = float(parts[2])
+                            if 'T1T1_1_0' in line:
+                                sec_foerster_expansion_errors.t1t1_1_0 = float(parts[2])
+                            if 'S1T1_1_0' in line:
+                                sec_foerster_expansion_errors.s1t1_1_0 = float(parts[2])
+                            if 'T1S1_1_0' in line:
+                                sec_foerster_expansion_errors.t1s1_1_0 = float(parts[2])
+                            if 'S1S1_1_1' in line:
+                                sec_foerster_expansion_errors.s1s1_1_1 = float(parts[2])
+                            if 'T1T1_1_1' in line:
+                                sec_foerster_expansion_errors.t1t1_1_1 = float(parts[2])
+                            if 'S1T1_1_1' in line:
+                                sec_foerster_expansion_errors.s1t1_1_1 = float(parts[2])
+                            if 'T1S1_1_1' in line:
+                                sec_foerster_expansion_errors.t1s1_1_1 = float(parts[2]) 
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):
