@@ -376,13 +376,17 @@ def DetailedParser(filepath, archive):
                                 _spq.append(float(parts[1]))
                                 sec_event_counts_by_type.spq = _spq       
                             if 'sta' in line:
-                                sec_event_counts_by_type.sta = float(parts[1])
+                                _sta.append(float(parts[1]))
+                                sec_event_counts_by_type.sta = _sta
                             if 'tpq' in line:
-                                sec_event_counts_by_type.tpq = float(parts[1])
+                                _tpq.append(float(parts[1]))
+                                sec_event_counts_by_type.tpq = _tpq
                             if 'tta' in line:
-                                sec_event_counts_by_type.tta = float(parts[1])
+                                _tta.append(float(parts[1]))
+                                sec_event_counts_by_type.tta = _tta
                             if 'ttf' in line:
-                                sec_event_counts_by_type.ttf = float(parts[1])
+                                _ttf.append(float(parts[1]))
+                                sec_event_counts_by_type.ttf = _ttf
                             if 'eject chg' in line:
                                 sec_event_counts_by_type.eject_chg = float(parts[1])
                             if 'inject e' in line:
@@ -466,6 +470,7 @@ def DetailedParser(filepath, archive):
                             parts = line.split()
                             parts = [float(x) for x in parts]
                             _values.append(parts)
+                        sec_dexter_and_foerster.name = file
                         sec_dexter_and_foerster.values = _values
                     if re.search(r'foerster_expansion_errors', line) and 'all_data_points' not in root:
                         sec_foerster_expansion_errors = sec_foerster.m_create(Foerster_expansion_errors)

@@ -68,6 +68,7 @@ class Foerster_expansion_errors(MSection):
 
 class Dexter_and_foerster(MSection):
     m_def = Section(validate=False)
+    name = Quantity(type=str, description='name of the file, which indicates the type of the "values"-matrix.')
     values = Quantity(type=np.float64, shape=['*', 2], description='1st row is rate in 1/s, 2nd row is pair distance in nm.')
 
 class Foerster(MSection):
