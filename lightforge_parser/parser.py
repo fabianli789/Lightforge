@@ -10,6 +10,7 @@ import os
 import re
 import datetime
 import numpy as np
+import filecmp
 from pathlib import Path
 
 from nomad.datamodel import EntryArchive
@@ -46,6 +47,10 @@ def DetailedParser(filepath, archive):
     runtime_analysis_hasrun = False
     device_data_hasrun= False
     foerster_hasrun = False
+    _coordinates = []
+    coordinates_counter = 0
+    coordinates_rows = [0]
+    
     for root, dirs, files in sorted(os.walk(filepath.parent)):
         natsort = lambda s: [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s)]
         
@@ -413,14 +418,43 @@ def DetailedParser(filepath, archive):
                     
                     if re.search(r'coord_\d+', file) and 'all_data_points' not in root:
                         sec_coordinates = sec_device_data.m_create(Coordinates)
-                        _coordinates = []
+                        
+                        
                         for i, line in enumerate(f):
                             parts = line.split()
                             parts = [float(p) for p in parts]
-                            _coordinates.append(parts) 
-                        sec_coordinates.coordinates = _coordinates      
-
-
+                            _coordinates.append(parts)
+                        
+                        
+                        if _coordinates[sum(coordinates_rows):] == _coordinates[sum(coordinates_rows) - coordinates_rows[-1]:sum(coordinates_rows)] and coordinates_counter >= 1:
+                            sec_coordinates.text = 'This file has the same content as the previous file/previous repeating subsection.'
+                        else: 
+                            sec_coordinates.coordinates = _coordinates[sum(coordinates_rows):]
+                        coordinates_counter += 1
+                        coordinates_rows.append(i+1)
+                    
+                    if re.search(r'mol_types_\d+', file) and 'all_data_points' not in root:
+                        sec_mol_types = sec_device_data.m_create(Mol_types)
+                        _mol_types = []
+                        for i, line in enumerate(f):
+                            line = float(line)
+                            _mol_types.append(line)
+                        sec_mol_types.mol_types = _mol_types
+                    
+                    if re.search(r'site_energies_\d+', file) and 'all_data_points' not in root:
+                        sec_site_energies = sec_device_data.m_create(Site_energies)
+                        _site_energies = []
+                        for i, line in enumerate(f):
+                            parts = line.split()
+                            parts = [float(p) for p in parts]
+                            _site_energies.append(parts)
+                        sec_site_energies.site_energies = _site_energies
+                if 'Foerster' in root:
+                    if not foerster_hasrun:
+                        sec_foerster = sec_material.m_create(Foerster)
+                        foerster_hasrun = True
+                    if re.search(r'Dexter_\d+_') or re.search(r'[a-zA-Z]+\d[a-zA-Z]\d_'):
+                        pass        
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):

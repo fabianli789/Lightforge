@@ -35,7 +35,7 @@ class Mol_types(MSection):
 class Coordinates(MSection):
     m_def = Section(validate=False)
     coordinates = Quantity(type=np.float64, shape=['*', 3])
-
+    text = Quantity(type=str)
 
 class Device_data(MSection):
     m_def = Section(validate=False)
@@ -51,9 +51,24 @@ class Energy_levels(MSection):
 class Exciton_separation(MSection):
     m_def = Section(validate=False)
 
+class Foerster_expansion_errors(MSection):
+    m_def = Section(validate=False)
+    s1s1_0_0 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    t1t1_0_0 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    s1t1_0_0 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    t1s1_0_0 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    s1s1_0_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    t1t1_0_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    s1t1_0_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    t1s1_0_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    s1s1_1_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    t1t1_1_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    s1t1_1_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
+    t1s1_1_1 = Quantity(type=np.float64, description='cumulative error of Gaussian Foerster rate expansion')
 class Foerster(MSection):
     m_def = Section(validate=False)
     
+    foerster_expansion_errors = SubSection(sub_section=Foerster_expansion_errors.m_def, repeats=False)
 class Emitter_emitter_transport_count(MSection):
     m_def = Section(validate=False)
     dexter_s1s1 = Quantity(type=np.float64, shape=['*'])
