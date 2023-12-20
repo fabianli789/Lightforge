@@ -26,7 +26,7 @@ from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
 from .metainfo.lightforge import (
                             IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
-                            Input, Settings, Layers, Pair_input, LF_materials, Mobility, Particle_densities, Charge_density_average, 
+                            Input, Settings, Layers, Pair_input, LF_materials, Run_lf_slr, Files_for_kmc, LF_add_info, Material_data, Lightforge_data, Mobility, Particle_densities, Charge_density_average, 
                             Exciton_decay_density_average, Photon_creation_density_average,
                             Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count,
                             Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis, Event_counts_by_type, Device_data, Electrodes, Energy_levels,

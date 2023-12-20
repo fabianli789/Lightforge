@@ -259,7 +259,7 @@ class LF_materials(MSection):
     m_def = Section(validate=False)
     
     name = Quantity(type=str, description='Name of the material.')
-    exciton_preset = Quantity(type=str)
+    lf_exciton_preset = Quantity(type=str)
     lf_energies = Quantity(type=np.float64, shape=[2], description='1st value is HOMO in eV, 2nd one is LUMO in eV.')
     lf_sigma = Quantity(type=np.float64, shape=[2], description='1st value is HOMO disorder in eV, 2nd value is LUMO disorder in eV.')
     lf_lambda = Quantity(type=np.float64, shape=[2], description='1st value is HOMO reorganization energy in eV, 2nd value is LUMO reorganziation energy in eV.')
@@ -276,18 +276,6 @@ class Settings(MSection):
     morphology_width = Quantity(type=np.float64)
     input_mode_transport = Quantity(type=str, description='''QP = QuantumPatch, PAR = parametric, eaip = Electron Affinity/Ionozation Potential, sig = sigma = energy disorder,
                                                             l = lambda = reorganziation energy.''')
-    
-    
-    
-    materials_host_exciton_preset = Quantity(type=str)
-    materials_host_energies = Quantity(type=np.float64, shape=[2], description='1st value is HOMO in eV, 2nd one is LUMO in eV. For the host material.')
-    materials_host_sigma = Quantity(type=np.float64, shape=[2], description='1st value is HOMO disorder in eV, 2nd value is LUMO disorder in eV. For the host material.')
-    materials_host_lambda = Quantity(type=np.float64, shape=[2], description='''1st value is HOMO reorganization energy in eV, 2nd value is LUMO reorganization energy in eV.
-                                                                                For the host material.''')
-    materials_emitter_energies = Quantity(type=np.float64, shape=[2], description='1st value is HOMO in eV, 2nd one is LUMO in eV. For the emitter material.')
-    materials_emitter_sigma = Quantity(type=np.float64, shape=[2], description='1st value is HOMO disorder in eV, 2nd value is LUMO disorder in eV. For the emitter material.')
-    materials_emitter_lambda = Quantity(type=np.float64, shape=[2], description='''1st value is HOMO reorganization energy in eV, 2nd value is LUMO reogranziation energy in eV.
-                                                                                For the emitter material.''')
     lf_neighbours = Quantity(type=np.float64)
     transfer_integral_source = Quantity(type=str)
     electrode_workfunction = Quantity(type=np.float64, shape=[2], description='''1st value is workfunction in eV of the electrode that is attached before the layer
@@ -320,15 +308,44 @@ class Settings(MSection):
     pair_input = SubSection(sub_section=Pair_input.m_def, repeats=True)
     layers = SubSection(sub_section=Layers.m_def, repeats=True)
     materials = SubSection(sub_section=LF_materials.m_def, repeats=True)
+
+class Run_lf_slr(MSection):
+    m_def = Section(validate=False)
+
+class Files_for_kmc(MSection):
+    m_def = validate(Section=False)
+
+
 class Input(MSection):
     m_def = Section(validate=False)
+    
     settings = SubSection(sub_section=Settings.m_def, repeats=False)
+    run_lf_slr = SubSection(sub_section=Run_lf_slr.m_def, repeats=False)
+    files_for_kmc = SubSection(sub_section=Files_for_kmc.m_def, repeats=False)
 
+class LF_add_info(MSection):
+    m_def = Section(validate=False)
+
+    lf_layer_id = Quantity(type=np.float64)
+    n_layer_sites = Quantity(type=np.float64)
+    sites_end_idx_in_device = Quantity(type=np.float64)
+    sites_start_idx_in_device = Quantity(type=np.float64)
+    add_info_thickness = Quantity(type=np.float64)
+    add_info_x_boundaries = Quantity(type=np.float64, shape=[2])
+class Material_data(MSection):
+    m_def = Section(validate=False)
+    
+    lf_add_info = SubSection(sub_section=LF_add_info.m_def, repeats=True)
+class Lightforge_data(MSection):
+    m_def = Section(validate=False)
+    
+    material_data = SubSection(sub_section=Material_data.m_def, repeats=False)
 class LightforgeCalculation(simulation.calculation.Calculation):
     m_def = Section(validate=False, extends_base_section=True)    
+    
     experiments = SubSection(sub_section=Experiments.m_def, repeats=False)
     material = SubSection(sub_section=Material.m_def, repeats=False)
     input = SubSection(sub_section=Input.m_def, repeats=False)
-
+    lightforge_data = SubSection(sub_section=Lightforge_data.m_def, repeats=False)
 
 m_package.__init_metainfo__()
