@@ -1,10 +1,7 @@
 #
 # This is a parser for Nanomatch GmbH's kMC software "Lightforge"
 #
-#
-#
-#
-#
+
 import yaml
 import os
 import re
@@ -26,11 +23,15 @@ from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
 from .metainfo.lightforge import (
                             IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
-                            Input, Settings, Layers, Pair_input, LF_materials, Run_lf_slr, Files_for_kmc, LF_add_info, Material_data, Lightforge_data, Mobility, Particle_densities, Charge_density_average, 
-                            Exciton_decay_density_average, Photon_creation_density_average,
+                            Input, Settings, Layers, Pair_input, LF_materials, Run_lf_slr, Files_for_kmc, 
+                            LF_add_info, Material_data, Lightforge_data, Mobility, Particle_densities, 
+                            Charge_density_average, Exciton_decay_density_average, 
+                            Photon_creation_density_average,
                             Quenching_density_average, Exciton_molpairs, Emitter_emitter_transport_count,
-                            Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis, Event_counts_by_type, Device_data, Electrodes, Energy_levels,
-                            Exciton_separation, Foerster, Site_energies, Mol_types, Coordinates, Dexter_and_foerster, Foerster_expansion_errors) 
+                            Host_emitter_transport_count, Host_host_transport_count, Runtime_analysis,
+                            Event_counts_by_type, Device_data, Electrodes, Energy_levels,
+                            Exciton_separation, Foerster, Site_energies, Mol_types, Coordinates,
+                            Dexter_and_foerster, Foerster_expansion_errors) 
 
 
 def DetailedParser(filepath, archive):
@@ -43,10 +44,13 @@ def DetailedParser(filepath, archive):
     
     sec_IQE2 = sec_current_characteristics.m_create(IQE2)
     sec_IV = sec_current_characteristics.m_create(IV)
+    sec_lightforge_data = sec_calc.m_create(Lightforge_data)
+    
     exciton_molpairs_hasrun = False
     runtime_analysis_hasrun = False
     device_data_hasrun= False
     foerster_hasrun = False
+    material_data_hasrun = False
     _coordinates = []
     coordinates_counter = 0
     coordinates_rows = [0]
@@ -509,6 +513,30 @@ def DetailedParser(filepath, archive):
                                 sec_foerster_expansion_errors.s1t1_1_1 = float(parts[2])
                             if 'T1S1_1_1' in line:
                                 sec_foerster_expansion_errors.t1s1_1_1 = float(parts[2]) 
+                if 'material_data' in root:
+                    if not material_data_hasrun:
+                        sec_material_data = sec_lightforge_data.m_create(Material_data)
+                        material_data_hasrun = True
+                    if re.search(r'add_info_\d+', file):
+                        sec_lf_add_info = sec_material_data.m_create(LF_add_info)
+                        file_add_info = yaml.safe_load(f)
+                        if 'layer_id' in file_add_info['layers'][0]:
+                            sec_lf_add_info.lf_layer_id = int(file_add_info['layers'][0]['layer_id'])
+                        if 'n_layer_sites' in file_add_info['layers'][0]:
+                            sec_lf_add_info.n_layer_sites = int(file_add_info['layers'][0]['n_layer_sites'])
+                        if 'sites_end_idx_in_device' in file_add_info['layers'][0]:
+                            sec_lf_add_info.sites_end_idx_in_device = file_add_info['layers'][0]['sites_end_idx_in_device']
+                        if 'sites_start_idx_in_device' in file_add_info['layers'][0]:
+                            sec_lf_add_info.sites_start_idx_in_device = file_add_info['layers'][0]['sites_start_idx_in_device']
+                        if 'thickness' in file_add_info['layers'][0]:
+                            sec_lf_add_info.add_info_thickness = file_add_info['layers'][0]['thickness']
+                        if 'x_boundaries' in file_add_info['layers'][0]:
+                            sec_lf_add_info.add_info_x_boundaries = file_add_info['layers'][0]['x_boundaries']
+
+
+
+
+
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):

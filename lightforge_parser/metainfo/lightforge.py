@@ -313,7 +313,7 @@ class Run_lf_slr(MSection):
     m_def = Section(validate=False)
 
 class Files_for_kmc(MSection):
-    m_def = validate(Section=False)
+    m_def = Section(validate=False)
 
 
 class Input(MSection):
@@ -326,12 +326,12 @@ class Input(MSection):
 class LF_add_info(MSection):
     m_def = Section(validate=False)
 
-    lf_layer_id = Quantity(type=np.float64)
-    n_layer_sites = Quantity(type=np.float64)
+    lf_layer_id = Quantity(type=int)
+    n_layer_sites = Quantity(type=int)
     sites_end_idx_in_device = Quantity(type=np.float64)
     sites_start_idx_in_device = Quantity(type=np.float64)
     add_info_thickness = Quantity(type=np.float64)
-    add_info_x_boundaries = Quantity(type=np.float64, shape=[2])
+    add_info_x_boundaries = Quantity(type=np.float64, shape=['*'])
 class Material_data(MSection):
     m_def = Section(validate=False)
     
