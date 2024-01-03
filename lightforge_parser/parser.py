@@ -54,19 +54,23 @@ def DetailedParser(filepath, archive):
     _coordinates = []
     coordinates_counter = 0
     coordinates_rows = [0]
-    
+#    exclude_dir = set(['logs', 'runtime_data', 'device_data'])
     for root, dirs, files in sorted(os.walk(filepath.parent)):
+        
+#        dirs[:] = [d for d in dirs if d not in exclude_dir]
+        
         natsort = lambda s: [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s)]
         
         files = sorted(files, key = natsort)
         i = 0
         while i < len(files):
-            if '.png' in files[i] or '.npz' in files[i]:
+            if '.png' in files[i] or '.npz' in files[i] or '.zip' in files[i] or '.out' in files[i]:
                 files.remove(files[i])
             else:
                 i += 1    
         for file in files:    
             with open(root +'/'+ file, 'r') as f:
+                
                 if 'current_density' in file and 'all_data_points' not in root:
                     sec_current_density = sec_current_characteristics.m_create(Current_density)
                     value = []
@@ -425,6 +429,7 @@ def DetailedParser(filepath, archive):
                                 sec_event_counts_by_type.spin_flip_exc = float(parts[1])
                             if 'thermal_decay' in line:
                                 sec_event_counts_by_type.thermal_decay = float(parts[1])
+                '''
                 if 'device_data' in root:
                     if not device_data_hasrun:
                         sec_device_data = sec_material.m_create(Device_data)
@@ -463,6 +468,7 @@ def DetailedParser(filepath, archive):
                             parts = [float(p) for p in parts]
                             _site_energies.append(parts)
                         sec_site_energies.site_energies = _site_energies
+                '''
                 if 'Foerster' in root:
                     if not foerster_hasrun:
                         sec_foerster = sec_material.m_create(Foerster)
