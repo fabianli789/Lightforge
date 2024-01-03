@@ -326,12 +326,16 @@ class Input(MSection):
 class LF_add_info(MSection):
     m_def = Section(validate=False)
 
-    lf_layer_id = Quantity(type=int)
-    n_layer_sites = Quantity(type=int)
-    sites_end_idx_in_device = Quantity(type=np.float64)
-    sites_start_idx_in_device = Quantity(type=np.float64)
-    add_info_thickness = Quantity(type=np.float64)
-    add_info_x_boundaries = Quantity(type=np.float64, shape=['*'])
+    lf_layer_id = Quantity(type=int, shape=['*'], description='''This repeating subsection corresponds to
+                                                                the number of add_info_x.yml files under
+                                                                lightforge_data.material_data. Each 
+                                                                layer_id corresponds to one layer with
+                                                                its n_layer_sites, thicknesses etc.''')
+    n_layer_sites = Quantity(type=int, shape=['*'])
+    sites_end_idx_in_device = Quantity(type=np.float64, shape=['*'])
+    sites_start_idx_in_device = Quantity(type=np.float64, shape=['*'])
+    add_info_thickness = Quantity(type=np.float64, shape=['*'])
+    add_info_x_boundaries = Quantity(type=np.float64, shape=['*', 2])
 class Material_data(MSection):
     m_def = Section(validate=False)
     

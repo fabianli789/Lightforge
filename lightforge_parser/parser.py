@@ -520,20 +520,40 @@ def DetailedParser(filepath, archive):
                     if re.search(r'add_info_\d+', file):
                         sec_lf_add_info = sec_material_data.m_create(LF_add_info)
                         file_add_info = yaml.safe_load(f)
-                        if 'layer_id' in file_add_info['layers'][0]:
-                            sec_lf_add_info.lf_layer_id = int(file_add_info['layers'][0]['layer_id'])
-                        if 'n_layer_sites' in file_add_info['layers'][0]:
-                            sec_lf_add_info.n_layer_sites = int(file_add_info['layers'][0]['n_layer_sites'])
-                        if 'sites_end_idx_in_device' in file_add_info['layers'][0]:
-                            sec_lf_add_info.sites_end_idx_in_device = file_add_info['layers'][0]['sites_end_idx_in_device']
-                        if 'sites_start_idx_in_device' in file_add_info['layers'][0]:
-                            sec_lf_add_info.sites_start_idx_in_device = file_add_info['layers'][0]['sites_start_idx_in_device']
-                        if 'thickness' in file_add_info['layers'][0]:
-                            sec_lf_add_info.add_info_thickness = file_add_info['layers'][0]['thickness']
-                        if 'x_boundaries' in file_add_info['layers'][0]:
-                            sec_lf_add_info.add_info_x_boundaries = file_add_info['layers'][0]['x_boundaries']
+                        _length_layers = len(file_add_info['layers'])
+                        
+                        _lf_layer_id = []
+                        _n_layer_sites = []
+                        _sites_end_idx_in_device = []
+                        _sites_start_idx_in_device = []
+                        _add_info_thickness = []
+                        _add_info_x_boundaries = []
+                        for i in range(_length_layers):
 
-
+                            if 'layer_id' in file_add_info['layers'][i]:
+                                _lf_layer_id.append(int(file_add_info['layers'][i]['layer_id']))
+                                
+                            if 'n_layer_sites' in file_add_info['layers'][i]:
+                                _n_layer_sites.append(int(file_add_info['layers'][i]['n_layer_sites']))
+                                 
+                            if 'sites_end_idx_in_device' in file_add_info['layers'][i]:
+                                _sites_end_idx_in_device.append(file_add_info['layers'][i]['sites_end_idx_in_device'])
+                                 
+                            if 'sites_start_idx_in_device' in file_add_info['layers'][i]:
+                                _sites_start_idx_in_device.append(file_add_info['layers'][i]['sites_start_idx_in_device'])
+                                 
+                            if 'thickness' in file_add_info['layers'][0]:
+                                _add_info_thickness.append(file_add_info['layers'][i]['thickness'])
+                                 
+                            if 'x_boundaries' in file_add_info['layers'][0]:
+                                _add_info_x_boundaries.append(file_add_info['layers'][i]['x_boundaries'])
+                                 
+                        sec_lf_add_info.lf_layer_id = _lf_layer_id
+                        sec_lf_add_info.n_layer_sites = _n_layer_sites
+                        sec_lf_add_info.sites_end_idx_in_device = _sites_end_idx_in_device
+                        sec_lf_add_info.sites_start_idx_in_device = _sites_start_idx_in_device
+                        sec_lf_add_info.add_info_thickness = _add_info_thickness
+                        sec_lf_add_info.add_info_x_boundaries = _add_info_x_boundaries
 
 
 
