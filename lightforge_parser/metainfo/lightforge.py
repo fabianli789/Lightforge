@@ -311,7 +311,10 @@ class Settings(MSection):
 
 class Run_lf_slr(MSection):
     m_def = Section(validate=False)
-
+    
+    lf_nodes = Quantity(type=int, description='number of cumputing nodes used.')
+    lf_ntasks = Quantity(type=int, description='number of CPUs used.')
+    lf_mem_per_cpu = Quantity(type=np.float64, description='memory in MB used per CPU')
 class Files_for_kmc(MSection):
     m_def = Section(validate=False)
 

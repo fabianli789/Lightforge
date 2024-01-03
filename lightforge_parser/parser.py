@@ -46,6 +46,8 @@ def DetailedParser(filepath, archive):
     sec_IV = sec_current_characteristics.m_create(IV)
     sec_lightforge_data = sec_calc.m_create(Lightforge_data)
     
+    sec_input = sec_calc.m_create(Input)
+    
     exciton_molpairs_hasrun = False
     runtime_analysis_hasrun = False
     device_data_hasrun= False
@@ -560,7 +562,18 @@ def DetailedParser(filepath, archive):
                         sec_lf_add_info.sites_start_idx_in_device = _sites_start_idx_in_device
                         sec_lf_add_info.add_info_thickness = _add_info_thickness
                         sec_lf_add_info.add_info_x_boundaries = _add_info_x_boundaries
-
+                if 'run_lf.slr' in file:
+                    sec_run_lf_slr = sec_input.m_create(Run_lf_slr)
+                    for i, line in enumerate(f):
+                        if 'nodes' in line:
+                            parts = line.split('=')
+                            sec_run_lf_slr.lf_nodes = int(parts[1])
+                        if 'ntask' in line:
+                            parts = line.split('=')
+                            sec_run_lf_slr.lf_ntasks = int(parts[1])
+                        if 'mem-per-cpu' in line:
+                            parts = line.split('=')
+                            sec_run_lf_slr.lf_mem_per_cpu = float(parts[1])
 
 
 class LightforgeParser():
