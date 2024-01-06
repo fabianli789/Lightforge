@@ -23,7 +23,8 @@ from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
 from .metainfo.lightforge import (
                             IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
-                            Input, Settings, Layers, Pair_input, LF_materials, Run_lf_slr, Files_for_kmc, 
+                            Input, Settings, Layers, Pair_input, Settings_materials, Settings_layers, 
+                            Layer_molecule_species, Run_lf_slr, Files_for_kmc, 
                             LF_add_info, Material_data, Lightforge_data, Mobility, Particle_densities, 
                             Charge_density_average, Exciton_decay_density_average, 
                             Photon_creation_density_average,
@@ -574,6 +575,103 @@ def DetailedParser(filepath, archive):
                         if 'mem-per-cpu' in line:
                             parts = line.split('=')
                             sec_run_lf_slr.lf_mem_per_cpu = float(parts[1])
+                if 'settings' in file:
+                    sec_settings = sec_input.m_create(Settings)
+                    materials_section = False   # counter for materials-section in settings-file
+                    energies_section = False    # counter for energies-section under materials-section
+                    layers_section = False
+                    molecule_species_section = False
+                    _lf_energies = []
+                    _lf_layers_materials = []
+                    _lf_molecule_species_material = []
+                    _lf_molecule_species_concentration = []
+                    for i, line in enumerate(f):
+#                        print("LINE 589: len(parts) before= ", len(parts))
+                        parts = line.split(':')
+#                        print("LINE 591: len(parts) after= ", len(parts))
+                        if 'pbc' in line:
+                            sec_settings.lf_pbc = parts[1]
+                            continue
+                        if 'excitonics' in line:
+                            sec_settings.lf_excitonics = parts[1]
+                            continue
+                        if 'connect_electrodes' in line:
+                            sec_settings.connect_electrodes = parts[1]
+                            continue
+                        if 'coulomb_mesh' in line:
+                            sec_settings.coulomb_mesh = parts[1]
+                            continue
+                        if re.search(r'\s+holes:', line):
+                            sec_settings.particles_holes = parts[1]
+                            continue
+                        if re.search(r'\s+electrons:', line):
+                            sec_settings.particles_electrons = parts[1]
+                            continue                        
+                        if re.search(r'\s+excitons:', line):
+                            sec_settings.particles_excitons = parts[1]
+                            continue
+                        if 'morphology_width' in line:
+                            sec_settings.morphology_width = parts[1]
+                            continue
+                        if 'materials' in line:
+                            materials_section = True
+                            continue
+                        if 'name' in line and materials_section == True:
+                            sec_settings_materials = sec_settings.m_create(Settings_materials)
+                            sec_settings_materials.material_name = parts[1]
+                            continue
+                        if 'input_mode_transport' in line and materials_section == True:
+                            _input_mode_transport = ''.join(parts[1:])
+                            sec_settings_materials.input_mode_transport = _input_mode_transport
+                            continue 
+                        if 'exciton preset' in line and materials_section == True:
+                            sec_settings_materials.lf_exciton_preset = parts[1]
+                            continue
+                        if 'energies' in line and materials_section == True:
+                            energies_section = True
+                            continue
+                        if re.search(r'\d+,\d+', line) and energies_section == True:
+                            _lf_energies.append(line.replace('-', '').replace('[', '').replace(']', '').split(','))
+                            sec_settings_materials.lf_energies = _lf_energies
+                            continue
+                        if ('[' not in line or '-' not in line) and energies_section == True:
+                            _lf_energies = []
+                            energies_section = False
+                        if re.search(r'^\w', line) and materials_section == True:
+                            materials_section = False
+                        if 'layers' in line:
+                            layers_section = True
+                            continue
+                        if 'thickness' in line and layers_section == True:    
+                            sec_settings_layers = sec_settings.m_create(Settings_layers)
+                            sec_settings_layers.layer_thickness = parts[1]
+                            continue
+                        if 'morphology_input_mode' in line and layers_section == True:
+                            sec_settings_layers.layer_morphology_input_mode = parts[1]
+                            continue
+                        if 'molecule_species' in line and layers_section == True:
+                            sec_molecule_species = sec_settings_layers.m_create(Layer_molecule_species)
+                            molecule_species_section = True
+                            continue
+                        if 'material' in line and molecule_species_section == True:    
+                            _lf_molecule_species_material.append(parts[1])
+                            sec_molecule_species.molecule_species_material = _lf_molecule_species_material
+                            continue
+                        if 'concentration' in line and molecule_species_section == True:
+                            _lf_molecule_species_concentration.append(parts[1])
+                            sec_molecule_species.molecule_species_concentration = _lf_molecule_species_concentration 
+                            continue
+                        if (re.search(r'^\w', line) or re.search(r'^-', line) or len(parts) == 1) and molecule_species_section == True:
+                            _lf_molecule_species_material = []
+                            _lf_molecule_species_concentration = []
+                            molecule_species_section = False
+                        if re.search(r'\w', line) and layers_section == True:
+                            layers_section = False
+
+
+
+
+
 
 
 class LightforgeParser():

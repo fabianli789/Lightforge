@@ -255,27 +255,62 @@ class Pair_input(MSection):
     dexter_transfer_integrals_maximum_ti = Quantity(type=np.float64)
     
     lf_QP_output = Quantity(type=str)
-class LF_materials(MSection):
+class Settings_materials(MSection):
     m_def = Section(validate=False)
     
-    name = Quantity(type=str, description='Name of the material.')
+    material_name = Quantity(type=str, description='Name of the material in settings file')
+    input_mode_transport = Quantity(type=str, description='''QP = QuantumPatch, 
+                                                                        PAR = parametric, 
+                                                                        eaip = Electron Affinity/Ionozation
+                                                                        Potential, sig = sigma = 
+                                                                        energy disorder,
+                                                                        l = lambda = reorganziation 
+                                                                        energy.''')
     lf_exciton_preset = Quantity(type=str)
-    lf_energies = Quantity(type=np.float64, shape=[2], description='1st value is HOMO in eV, 2nd one is LUMO in eV.')
-    lf_sigma = Quantity(type=np.float64, shape=[2], description='1st value is HOMO disorder in eV, 2nd value is LUMO disorder in eV.')
-    lf_lambda = Quantity(type=np.float64, shape=[2], description='1st value is HOMO reorganization energy in eV, 2nd value is LUMO reorganziation energy in eV.')
+    lf_energies = Quantity(type=np.float64, shape=['*', 2], description='''2-by-x matrix. 1st value is 
+                                                                           HOMO in eV, 2nd one is
+                                                                           LUMO in eV. Check 
+                                                                           input_mode_transport to see
+                                                                           which parameters are being
+                                                                           referred here.''')
+
+class Layer_molecule_species(MSection):
+    m_def = Section(validate=False)
+
+    molecule_species_material = Quantity(type=str, shape=['*'], description='''name of materials in this
+                                                                               layer, 
+                                                                            with materials defined in 
+                                                                    settings_materials.material_name.
+                                                                    Order of materials corresponds to
+                                                                    order of layer_concentration''')
+    molecule_species_concentration = Quantity(type=np.float64, shape=['*'], description='''concentration of 
+                                                                                material in layer,
+                                                                                max concentration is 1.
+                                                                                Order of concentrations
+                                                                                corresponds to order of
+                                                                                layer_material''')
+
+class Settings_layers(MSection):
+    m_def = Section(validate=False)
+
+    layer_thickness = Quantity(type=np.float64, description='thickness of layer in nm.')
+    layer_morphology_input_mode = Quantity(type=str)
+    layer_molecule_species = SubSection(sub_section=Layer_molecule_species.m_def, repeats=True)
+                                                        
+
 class Settings(MSection):
     m_def = Section(validate=False)
     
-    pbc = Quantity(type=str)
-    excitonics = Quantity(type=str)
+    lf_pbc = Quantity(type=str, description='periodic boundary conditions in xyz-direction')
+    lf_excitonics = Quantity(type=str)
     connect_electrodes = Quantity(type=str)
     coulomb_mesh = Quantity(type=str)
     particles_holes = Quantity(type=str)
     particles_electrons = Quantity(type=str)
     particles_excitons = Quantity(type=str)
     morphology_width = Quantity(type=np.float64)
-    input_mode_transport = Quantity(type=str, description='''QP = QuantumPatch, PAR = parametric, eaip = Electron Affinity/Ionozation Potential, sig = sigma = energy disorder,
-                                                            l = lambda = reorganziation energy.''')
+
+
     lf_neighbours = Quantity(type=np.float64)
     transfer_integral_source = Quantity(type=str)
     electrode_workfunction = Quantity(type=np.float64, shape=[2], description='''1st value is workfunction in eV of the electrode that is attached before the layer
@@ -307,8 +342,8 @@ class Settings(MSection):
 
     pair_input = SubSection(sub_section=Pair_input.m_def, repeats=True)
     layers = SubSection(sub_section=Layers.m_def, repeats=True)
-    materials = SubSection(sub_section=LF_materials.m_def, repeats=True)
-
+    settings_materials = SubSection(sub_section=Settings_materials.m_def, repeats=True)
+    settings_layers = SubSection(sub_section=Settings_layers.m_def, repeats=True)
 class Run_lf_slr(MSection):
     m_def = Section(validate=False)
     
