@@ -258,7 +258,7 @@ class Settings_pair_input(MSection):
     molecule_1_type = Quantity(type=str)
     molecule_2_type = Quantity(type=str)
     
-    lf_QP_output = Quantity(type=str)
+    lf_qp_output = Quantity(type=str)
 
     settings_hole_transfer_integrals = SubSection(sub_section=Settings_hole_transfer_integrals.m_def, repeats=False)
     settings_electron_transfer_integrals = SubSection(sub_section=Settings_electron_transfer_integrals.m_def, repeats=False)
@@ -275,6 +275,9 @@ class Settings_materials(MSection):
                                                                         l = lambda = reorganziation 
                                                                         energy.''')
     lf_exciton_preset = Quantity(type=str)
+    lf_molecule_pdb = Quantity(type=str, description='name of file that provides data about the molecules.')
+    lf_qp_output_sigma = Quantity(type=str)
+    lf_qp_output_eaip = Quantity(type=str)
     lf_energies = Quantity(type=np.float64, shape=['*', 2], description='''2-by-x matrix. 1st value is 
                                                                            HOMO in eV, 2nd one is
                                                                            LUMO in eV. Check 
@@ -319,6 +322,13 @@ class Settings_electrodes(MSection):
     electrode_wf_decay_length = Quantity(type=np.float64)
     electrode_coupling = Quantity(type=np.float64)
 
+class Settings_qp_output_files(MSection):
+    m_def = Section(validate=False)
+
+    qp_output_files_name = Quantity(type=str, description='''files from Nanomatch GmbH software
+                                                             "QuantumPatch" (qp) are used.''')
+    qp_output_files_output_zip = Quantity(type=str)    
+
 class Settings(MSection):
     m_def = Section(validate=False)
     
@@ -336,7 +346,7 @@ class Settings(MSection):
 
     lf_simulations = Quantity(type=int, description='number of simulation runs.')
     lf_measurement = Quantity(type=str)
-    lf_temperature = Quantity(type=np.float64, shape=['*'])
+    lf_temperature = Quantity(type=np.float64)
     lf_field_direction = Quantity(type=np.float64, shape=['*'])
     lf_field_strength = Quantity(type=np.float64, shape=['*'], description='array for applied electric fields in V/nm.')
     lf_initial_holes = Quantity(type=int)
@@ -345,10 +355,10 @@ class Settings(MSection):
     lf_max_iterations = Quantity(type=int, description='max number of iterations as convergence criterion.')
     
     lf_ti_prune = Quantity(type=str)
+    lf_noise_damping = Quantity(type=str)
     lf_expansion_scheme = Quantity(type=str)
-    lf_qp_output_files_name = Quantity(type=str, description='files from Nanomatch GmbH software "QuantumPatch" (qp) are used.')
-    lf_qp_output_files_output_zip = Quantity(type=str)
-    lf_molecule_pdb = Quantity(type=str, description='name of file that provides data about the molecules.')
+    
+    
     qp_output_sigma = Quantity(type=str)
     qp_output_eaip = Quantity(type=str)
     lf_rates = Quantity(type=str)
@@ -359,6 +369,7 @@ class Settings(MSection):
     settings_materials = SubSection(sub_section=Settings_materials.m_def, repeats=True)
     settings_layers = SubSection(sub_section=Settings_layers.m_def, repeats=True)
     settings_electrodes = SubSection(sub_section=Settings_electrodes.m_def, repeats=True)
+    settings_qp_output_files = SubSection(sub_section=Settings_qp_output_files.m_def, repeats=True)
 class Run_lf_slr(MSection):
     m_def = Section(validate=False)
     

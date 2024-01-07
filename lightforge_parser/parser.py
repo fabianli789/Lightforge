@@ -2,7 +2,9 @@
 # This is a parser for Nanomatch GmbH's kMC software "Lightforge"
 # Important: For this parser to work properly, make sure that the very last row in the Lightforge
 # settings file starts with any letter, in other words it must not start with space or with a dash.
-
+#
+#
+# IMPORTANT for 8.1.24: Zeipunkt des Ausschaltens bestimmer sections in settings-file nicht korrekt
 import yaml
 import os
 import re
@@ -27,7 +29,7 @@ from .metainfo.lightforge import (
                             Input, Settings, Settings_pair_input, Settings_materials, Settings_layers, 
                             Layer_molecule_species, Settings_electrodes, Settings_hole_transfer_integrals, 
                             Settings_electron_transfer_integrals, Settings_dexter_transfer_integrals, 
-                            Run_lf_slr, Files_for_kmc, 
+                            Settings_qp_output_files, Run_lf_slr, Files_for_kmc, 
                             LF_add_info, Material_data, Lightforge_data, Mobility, Particle_densities, 
                             Charge_density_average, Exciton_decay_density_average, 
                             Photon_creation_density_average,
@@ -589,14 +591,17 @@ def DetailedParser(filepath, archive):
                     hole_transfer_integrals_section = False
                     electron_transfer_integrals_section = False
                     dexter_transfer_integrals_section = False
+                    qp_output_files_section = False
                     _lf_energies = []
                     _lf_layers_materials = []
                     _lf_molecule_species_material = []
                     _lf_molecule_species_concentration = []
                     _lf_electrodes_workfunction = []
-                    
+                    _lf_field_direction = []
                     for i, line in enumerate(f):
                         parts = line.split(':')
+                        if re.search(r'^#', line):
+                            continue
                         if 'pbc' in line:
                             sec_settings.lf_pbc = parts[1]
                             continue
@@ -634,6 +639,15 @@ def DetailedParser(filepath, archive):
                             continue 
                         if 'exciton preset' in line and materials_section == True:
                             sec_settings_materials.lf_exciton_preset = parts[1]
+                            continue
+                        if 'molecule_pdb' in line and materials_section == True:
+                            sec_settings_materials.lf_molecule_pdb = parts[1]
+                            continue
+                        if 'qp_output_sigma' in line.lower() and materials_section == True:
+                            sec_settings_materials.lf_qp_output_sigma = parts[1]
+                            continue
+                        if 'qp_output_eaip' in line.lower() and materials_section == True:
+                            sec_settings_materials.lf_qp_output_eaip = parts[1]
                             continue
                         if 'energies' in line and materials_section == True:
                             energies_section = True
@@ -678,7 +692,8 @@ def DetailedParser(filepath, archive):
                         if re.search(r'\w', line) and layers_section == True:
                             layers_section = False
                         if 'neighbours' in line:
-                            sec_settings.lf_neighbors = parts[1]
+                            sec_settings.lf_neighbours = parts[1]
+                            continue
                         if 'transfer_integral_source' in line:
                             sec_settings.transfer_integral_source = parts[1]
                             continue
@@ -712,6 +727,9 @@ def DetailedParser(filepath, archive):
                         if 'molecule 2' in line and pair_input_section == True:
                             sec_settings_pair_input.molecule_2_type = parts[1]
                             continue
+                        if re.search(r'\sqp_output:', line.lower()) and pair_input_section == True:
+                            sec_settings_pair_input.lf_qp_output = parts[1]
+                            continue
                         if 'hole_transfer_integrals' in line and pair_input_section == True:
                             sec_hole_transfer_integrals = sec_settings_pair_input.m_create(
                                 Settings_hole_transfer_integrals)
@@ -721,7 +739,6 @@ def DetailedParser(filepath, archive):
                             sec_hole_transfer_integrals.hole_transfer_integrals_wf_decay_length = parts[1]
                             continue
                         if 'maximum_ti' in line and hole_transfer_integrals_section == True:
-                            print("LINE 724: hole maximum_ti")
                             sec_hole_transfer_integrals.hole_transfer_integrals_maximum_ti = parts[1]
                             continue
                         if ((re.search(r'electron', line) or re.search(r'dexter', line.lower()) or
@@ -761,6 +778,70 @@ def DetailedParser(filepath, archive):
                             dexter_transfer_integrals_section = False
                         if re.search(r'^\w', line) and pair_input_section == True:
                             pair_input_section = False
+                        if 'simulations' in line:
+                            sec_settings.lf_simulations = int(parts[1])
+                            continue
+                        if 'measurement' in line:
+                            sec_settings.lf_measurement = parts[1]
+                            continue
+                        if 'temperature' in line.lower():
+                            sec_settings.lf_temperature = parts[1]
+                            continue
+                        if 'field_direction' in line:
+                            _lf_field_direction = np.array(parts[1])
+                            sec_settings.lf_field_direction = _lf_field_direction # check!
+                            continue
+                        if 'field_strength' in line:
+                            _fields = parts[1].split()
+                            sec_settings.lf_field_strength = _fields
+                            continue
+                        if 'initial_holes' in line:
+                            sec_settings.lf_initial_holes = int(parts[1])
+                            continue
+                        if 'initial_electrons' in line:
+                            sec_settings.lf_initial_electrons = int(parts[1])    
+                            continue
+                        if 'iv_fluctuation' in line:
+                            sec_settings.lf_iv_fluctuation = parts[1]
+                            continue
+                        if 'max_iterations' in line:
+                            sec_settings.lf_max_iterations = int(parts[1])
+                            continue
+                        if 'ti_prune' in line:
+                            sec_settings.lf_ti_prune = parts[1]
+                            continue
+                        if 'noise_damping' in line:
+                            sec_settings.lf_noise_damping = parts[1]
+                            continue
+                        if 'expansion_scheme' in line:
+                            sec_settings.lf_expansion_scheme = parts[1]
+                            continue
+                        if 'qp_output_files' in line.lower():
+                            qp_output_files_section = True
+                            print("LINE 806: qp_output_files")
+                            continue
+                        if re.search(r'^-', line) and qp_output_files_section == True:
+                            sec_qp_output_files = sec_settings.m_create(Settings_qp_output_files)
+                        if 'name' in line and qp_output_files_section == True:
+                            sec_qp_output_files.qp_output_files_name = parts[1]
+                            continue
+                        if 'qp_output.zip' in line.lower() and qp_output_files_section == True:
+                            sec_qp_output_files.qp_output_files_output_zip = parts[1]
+                            continue
+                        print("LINE 816")
+                        if re.search(r'^\w', line) and qp_output_files_section == True:
+                            qp_output_files_section = False
+                            print("i = ", i)
+                        if re.search(r'^rates', line):
+                            sec_settings.lf_rates = parts[1]
+                            continue
+                        if 'superexchange' in line:
+                            sec_settings.lf_superexchange = parts[1]
+                            continue
+                        if 'epsilon_material' in line:
+                            sec_settings.lf_epsilon_material = parts[1]
+                            continue
+                        
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):
