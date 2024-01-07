@@ -1,6 +1,7 @@
 #
 # This is a parser for Nanomatch GmbH's kMC software "Lightforge"
-#
+# Important: For this parser to work properly, make sure that the very last row in the Lightforge
+# settings file starts with any letter, in other words it must not start with space or with a dash.
 
 import yaml
 import os
@@ -23,8 +24,10 @@ from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
 from .metainfo.lightforge import (
                             IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
-                            Input, Settings, Layers, Pair_input, Settings_materials, Settings_layers, 
-                            Layer_molecule_species, Run_lf_slr, Files_for_kmc, 
+                            Input, Settings, Settings_pair_input, Settings_materials, Settings_layers, 
+                            Layer_molecule_species, Settings_electrodes, Settings_hole_transfer_integrals, 
+                            Settings_electron_transfer_integrals, Settings_dexter_transfer_integrals, 
+                            Run_lf_slr, Files_for_kmc, 
                             LF_add_info, Material_data, Lightforge_data, Mobility, Particle_densities, 
                             Charge_density_average, Exciton_decay_density_average, 
                             Photon_creation_density_average,
@@ -581,14 +584,19 @@ def DetailedParser(filepath, archive):
                     energies_section = False    # counter for energies-section under materials-section
                     layers_section = False
                     molecule_species_section = False
+                    electrodes_section = False
+                    pair_input_section = False
+                    hole_transfer_integrals_section = False
+                    electron_transfer_integrals_section = False
+                    dexter_transfer_integrals_section = False
                     _lf_energies = []
                     _lf_layers_materials = []
                     _lf_molecule_species_material = []
                     _lf_molecule_species_concentration = []
+                    _lf_electrodes_workfunction = []
+                    
                     for i, line in enumerate(f):
-#                        print("LINE 589: len(parts) before= ", len(parts))
                         parts = line.split(':')
-#                        print("LINE 591: len(parts) after= ", len(parts))
                         if 'pbc' in line:
                             sec_settings.lf_pbc = parts[1]
                             continue
@@ -659,21 +667,100 @@ def DetailedParser(filepath, archive):
                             continue
                         if 'concentration' in line and molecule_species_section == True:
                             _lf_molecule_species_concentration.append(parts[1])
-                            sec_molecule_species.molecule_species_concentration = _lf_molecule_species_concentration 
+                            sec_molecule_species.molecule_species_concentration = (
+                                _lf_molecule_species_concentration) 
                             continue
-                        if (re.search(r'^\w', line) or re.search(r'^-', line) or len(parts) == 1) and molecule_species_section == True:
+                        if (re.search(r'^\w', line) or re.search(r'^-', line) or len(parts) == 1) and (
+                                molecule_species_section == True):
                             _lf_molecule_species_material = []
                             _lf_molecule_species_concentration = []
                             molecule_species_section = False
                         if re.search(r'\w', line) and layers_section == True:
                             layers_section = False
-
-
-
-
-
-
-
+                        if 'neighbours' in line:
+                            sec_settings.lf_neighbors = parts[1]
+                        if 'transfer_integral_source' in line:
+                            sec_settings.transfer_integral_source = parts[1]
+                            continue
+                        if 'electrodes' in line:
+                            electrodes_section = True
+                            continue
+                        if re.search(r'^-', line) and electrodes_section == True:
+                            sec_settings_electrodes = sec_settings.m_create(Settings_electrodes)
+                        if 'electrode_workfunction' in line and electrodes_section == True:    
+                            sec_settings_electrodes.electrode_workfunction = parts[1]
+                            continue
+                        if 'coupling_model' in line and electrodes_section == True:
+                            sec_settings_electrodes.electrode_coupling_model = parts[1]
+                            continue
+                        if 'electrode_wf_decay_length' in line and electrodes_section == True:
+                            sec_settings_electrodes.electrode_wf_decay_length = parts[1]
+                            continue
+                        if 'electrode_coupling' in line and electrodes_section == True:
+                            sec_settings_electrodes.electrode_coupling = parts[1]
+                            continue
+                        if re.search(r'^\w', line) and electrodes_section == True:
+                            electrodes_section = False
+                        if 'pair_input' in line:
+                            pair_input_section = True
+                            continue
+                        if re.search(r'^-', line) and pair_input_section == True:
+                            sec_settings_pair_input = sec_settings.m_create(Settings_pair_input)
+                        if 'molecule 1' in line and pair_input_section == True:
+                            sec_settings_pair_input.molecule_1_type = parts[1]
+                            continue
+                        if 'molecule 2' in line and pair_input_section == True:
+                            sec_settings_pair_input.molecule_2_type = parts[1]
+                            continue
+                        if 'hole_transfer_integrals' in line and pair_input_section == True:
+                            sec_hole_transfer_integrals = sec_settings_pair_input.m_create(
+                                Settings_hole_transfer_integrals)
+                            hole_transfer_integrals_section = True                            
+                            continue
+                        if 'wf_decay_length' in line and hole_transfer_integrals_section == True:
+                            sec_hole_transfer_integrals.hole_transfer_integrals_wf_decay_length = parts[1]
+                            continue
+                        if 'maximum_ti' in line and hole_transfer_integrals_section == True:
+                            print("LINE 724: hole maximum_ti")
+                            sec_hole_transfer_integrals.hole_transfer_integrals_maximum_ti = parts[1]
+                            continue
+                        if ((re.search(r'electron', line) or re.search(r'dexter', line.lower()) or
+                            re.search(r'^-', line) or re.search(r'^\w', line)) and 
+                            hole_transfer_integrals_section == True):
+                            hole_transfer_integrals_section = False  
+                        if 'electron_transfer_integrals' in line and pair_input_section == True:
+                            sec_electron_transfer_integrals = sec_settings_pair_input.m_create(
+                                Settings_electron_transfer_integrals)
+                            electron_transfer_integrals_section = True                            
+                            continue
+                        if 'wf_decay_length' in line and electron_transfer_integrals_section == True:
+                            sec_electron_transfer_integrals.electron_transfer_integrals_wf_decay_length = (
+                                parts[1])
+                            continue
+                        if 'maximum_ti' in line and electron_transfer_integrals_section == True:
+                            sec_electron_transfer_integrals.electron_transfer_integrals_maximum_ti = parts[1]
+                            continue
+                        if ((re.search(r'hole', line) or re.search(r'dexter', line.lower()) or
+                            re.search(r'^-', line) or re.search(r'^\w', line)) and 
+                            electron_transfer_integrals_section == True):
+                            electron_transfer_integrals_section = False
+                        if 'dexter_transfer_integrals' in line.lower() and pair_input_section == True:
+                            sec_dexter_transfer_integrals = sec_settings_pair_input.m_create(
+                                Settings_dexter_transfer_integrals)
+                            dexter_transfer_integrals_section = True                            
+                            continue
+                        if 'wf_decay_length' in line and dexter_transfer_integrals_section == True:
+                            sec_dexter_transfer_integrals.dexter_transfer_integrals_wf_decay_length = parts[1]
+                            continue
+                        if 'maximum_ti' in line and dexter_transfer_integrals_section == True:
+                            sec_dexter_transfer_integrals.dexter_transfer_integrals_maximum_ti = parts[1]
+                            continue
+                        if ((re.search(r'hole', line) or re.search(r'electron', line.lower()) or
+                            re.search(r'^-', line) or re.search(r'^\w', line)) and 
+                            dexter_transfer_integrals_section == True):
+                            dexter_transfer_integrals_section = False
+                        if re.search(r'^\w', line) and pair_input_section == True:
+                            pair_input_section = False
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):

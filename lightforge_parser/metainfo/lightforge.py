@@ -235,26 +235,34 @@ class Material(MSection):
     exciton_separation = SubSection(sub_section=Exciton_separation.m_def, repeats=False)
     foerster = SubSection(sub_section=Foerster.m_def, repeats=False)
 
-class Layers(MSection):
+class Settings_hole_transfer_integrals(MSection):
     m_def = Section(validate=False)
 
-    lf_thickness = Quantity(type=np.float64)
-    morphology_input_mode = Quantity(type=str)
-    lf_material = Quantity(type=str, shape=['*', '*'], description='''Indicates what type of material this layer is made of (host, emitter etc) and its concentration 
-                                                                    with 1.0 being max concentration.''')
-class Pair_input(MSection):
+    hole_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
+    hole_transfer_integrals_maximum_ti = Quantity(type=np.float64)
+
+class Settings_electron_transfer_integrals(MSection):
+    m_def = Section(validate=False)
+
+    electron_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
+    electron_transfer_integrals_maximum_ti = Quantity(type=np.float64)
+
+class Settings_dexter_transfer_integrals(MSection):
+    m_def = Section(validate=False)
+
+    dexter_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
+    dexter_transfer_integrals_maximum_ti = Quantity(type=np.float64)
+class Settings_pair_input(MSection):
     m_def = Section(validate=False)
     
     molecule_1_type = Quantity(type=str)
     molecule_2_type = Quantity(type=str)
-    hole_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
-    hole_transfer_ingetrals_maximum_ti = Quantity(type=np.float64)
-    electron_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
-    electron_transfer_integrals_maximum_ti = Quantity(type=np.float64)
-    dexter_transfer_integrals_wf_decay_length = Quantity(type=np.float64)
-    dexter_transfer_integrals_maximum_ti = Quantity(type=np.float64)
     
     lf_QP_output = Quantity(type=str)
+
+    settings_hole_transfer_integrals = SubSection(sub_section=Settings_hole_transfer_integrals.m_def, repeats=False)
+    settings_electron_transfer_integrals = SubSection(sub_section=Settings_electron_transfer_integrals.m_def, repeats=False)
+    settings_dexter_transfer_integrals = SubSection(sub_section=Settings_dexter_transfer_integrals.m_def, repeats=False)
 class Settings_materials(MSection):
     m_def = Section(validate=False)
     
@@ -296,7 +304,20 @@ class Settings_layers(MSection):
     layer_thickness = Quantity(type=np.float64, description='thickness of layer in nm.')
     layer_morphology_input_mode = Quantity(type=str)
     layer_molecule_species = SubSection(sub_section=Layer_molecule_species.m_def, repeats=True)
-                                                        
+
+class Settings_electrodes(MSection):
+    m_def = Section(validate=False)
+
+    electrode_workfunction = Quantity(type=np.float64, description='''workfunction in eV. 1st repeating
+                                                                      subsection is electrode attached
+                                                                      before the first layer (which is
+                                                                      defined under 
+                                                                      settings.settings_layers) 
+                                                                      2nd electrode is attached after the 
+                                                                      last layer.''')
+    electrode_coupling_model = Quantity(type=str)
+    electrode_wf_decay_length = Quantity(type=np.float64)
+    electrode_coupling = Quantity(type=np.float64)
 
 class Settings(MSection):
     m_def = Section(validate=False)
@@ -310,15 +331,9 @@ class Settings(MSection):
     particles_excitons = Quantity(type=str)
     morphology_width = Quantity(type=np.float64)
 
-
     lf_neighbours = Quantity(type=np.float64)
     transfer_integral_source = Quantity(type=str)
-    electrode_workfunction = Quantity(type=np.float64, shape=[2], description='''1st value is workfunction in eV of the electrode that is attached before the layer
-                                                                                 that was defined first (defined under settings.layers.lf_material). 2nd electrode
-                                                                                 is attached after the last layer.''')
-    electrode_coupling_model = Quantity(type=str, shape=[2])
-    electrode_wf_decay_length = Quantity(type=np.float64, shape=[2])
-    electrode_coupling = Quantity(type=np.float64, shape=[2])
+
     lf_simulations = Quantity(type=int, description='number of simulation runs.')
     lf_measurement = Quantity(type=str)
     lf_temperature = Quantity(type=np.float64, shape=['*'])
@@ -340,10 +355,10 @@ class Settings(MSection):
     lf_superexchange = Quantity(type=str)
     lf_epsilon_material = Quantity(type=np.float64)
 
-    pair_input = SubSection(sub_section=Pair_input.m_def, repeats=True)
-    layers = SubSection(sub_section=Layers.m_def, repeats=True)
+    settings_pair_input = SubSection(sub_section=Settings_pair_input.m_def, repeats=True)
     settings_materials = SubSection(sub_section=Settings_materials.m_def, repeats=True)
     settings_layers = SubSection(sub_section=Settings_layers.m_def, repeats=True)
+    settings_electrodes = SubSection(sub_section=Settings_electrodes.m_def, repeats=True)
 class Run_lf_slr(MSection):
     m_def = Section(validate=False)
     
