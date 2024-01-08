@@ -3,8 +3,6 @@
 # Important: For this parser to work properly, make sure that the very last row in the Lightforge
 # settings file starts with any letter, in other words it must not start with space or with a dash.
 #
-#
-# IMPORTANT for 8.1.24: Zeipunkt des Ausschaltens bestimmer sections in settings-file nicht korrekt
 import yaml
 import os
 import re
@@ -650,14 +648,14 @@ def DetailedParser(filepath, archive):
                             sec_settings_materials.lf_qp_output_eaip = parts[1]
                             continue
                         if 'energies' in line and materials_section == True:
+                            _lf_energies = []
                             energies_section = True
                             continue
-                        if re.search(r'\d+,\d+', line) and energies_section == True:
+                        if re.search(r'\d+,\d+', line) and '-' in line and energies_section == True:
                             _lf_energies.append(line.replace('-', '').replace('[', '').replace(']', '').split(','))
                             sec_settings_materials.lf_energies = _lf_energies
                             continue
                         if ('[' not in line or '-' not in line) and energies_section == True:
-                            _lf_energies = []
                             energies_section = False
                         if re.search(r'^\w', line) and materials_section == True:
                             materials_section = False
@@ -674,8 +672,10 @@ def DetailedParser(filepath, archive):
                         if 'molecule_species' in line and layers_section == True:
                             sec_molecule_species = sec_settings_layers.m_create(Layer_molecule_species)
                             molecule_species_section = True
+                            _lf_molecule_species_material = []
+                            _lf_molecule_species_concentration = []
                             continue
-                        if 'material' in line and molecule_species_section == True:    
+                        if re.search(r'-\s*material', line) and molecule_species_section == True:    
                             _lf_molecule_species_material.append(parts[1])
                             sec_molecule_species.molecule_species_material = _lf_molecule_species_material
                             continue
@@ -684,10 +684,9 @@ def DetailedParser(filepath, archive):
                             sec_molecule_species.molecule_species_concentration = (
                                 _lf_molecule_species_concentration) 
                             continue
-                        if (re.search(r'^\w', line) or re.search(r'^-', line) or len(parts) == 1) and (
+                        if (re.search(r'^\w', line) or re.search(r'^-', line) or len(parts)==1) and (
                                 molecule_species_section == True):
-                            _lf_molecule_species_material = []
-                            _lf_molecule_species_concentration = []
+                            
                             molecule_species_section = False
                         if re.search(r'\w', line) and layers_section == True:
                             layers_section = False
@@ -818,7 +817,6 @@ def DetailedParser(filepath, archive):
                             continue
                         if 'qp_output_files' in line.lower():
                             qp_output_files_section = True
-                            print("LINE 806: qp_output_files")
                             continue
                         if re.search(r'^-', line) and qp_output_files_section == True:
                             sec_qp_output_files = sec_settings.m_create(Settings_qp_output_files)
@@ -828,10 +826,8 @@ def DetailedParser(filepath, archive):
                         if 'qp_output.zip' in line.lower() and qp_output_files_section == True:
                             sec_qp_output_files.qp_output_files_output_zip = parts[1]
                             continue
-                        print("LINE 816")
                         if re.search(r'^\w', line) and qp_output_files_section == True:
                             qp_output_files_section = False
-                            print("i = ", i)
                         if re.search(r'^rates', line):
                             sec_settings.lf_rates = parts[1]
                             continue
