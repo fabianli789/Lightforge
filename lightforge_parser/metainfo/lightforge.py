@@ -348,7 +348,8 @@ class Settings(MSection):
     lf_measurement = Quantity(type=str)
     lf_temperature = Quantity(type=np.float64)
     lf_field_direction = Quantity(type=np.float64, shape=['*'])
-    lf_field_strength = Quantity(type=np.float64, shape=['*'], description='array for applied electric fields in V/nm.')
+    lf_field_strength = Quantity(type=np.float64, shape=['*'], description='''array for applied electric 
+                                                                            fields in V/nm.''')
     lf_initial_holes = Quantity(type=int)
     lf_initial_electrons = Quantity(type=int)
     lf_iv_fluctuation = Quantity(type=np.float64, description='iv-fluctuation as convergence criterion.')
@@ -376,15 +377,49 @@ class Run_lf_slr(MSection):
     lf_nodes = Quantity(type=int, description='number of cumputing nodes used.')
     lf_ntasks = Quantity(type=int, description='number of CPUs used.')
     lf_mem_per_cpu = Quantity(type=np.float64, description='memory in MB used per CPU')
+
+class Js_homo_mol_pairs(MSection):
+    m_def = Section(validate=False)
+
+    js_homo_mol_pairs_value = Quantity(type=np.float64, shape=[2, '*'], description='''2-by-x array, contains all data
+                                                                        from Js_homo_mol_pairs files in
+                                                                        files_for_kmc folder''')
+
+class Sigma_mol_pairs(MSection):
+    m_def = Section(validate=False)
+
+    sigma_mol_pairs_value = Quantity(type=np.float64, shape=['*'], description='''contains all data from
+                                                                                  sigma_mol_pairs file
+                                                                                  in files_for_kmc folder''')
+
 class Files_for_kmc(MSection):
     m_def = Section(validate=False)
 
+    lf_COM = Quantity(type=np.float64, shape=[4, '*'], description='''4-by-x array, contains all data
+                                                                      from COM.dat file in files_for_kmc
+                                                                      folder''')
+    lf_inner_idxs = Quantity(type=np.float64, shape=['*'], description='''contains all data from
+                                                                          inner_idxs.dat file 
+                                                                          in files_for_kmc folder''')
+    lf_ip_ea = Quantity(type=np.float64, shape=[2, '*'], description='''2-by-x array, containing the data
+                                                                        from IP_EA.dat file in 
+                                                                        files_for_kmc''')                                                                  
+    js_homo_mol_pairs = SubSection(sub_section=Js_homo_mol_pairs.m_def, repeats=True)
+    sigma_mol_pairs = SubSection(sub_section=Sigma_mol_pairs.m_def, repeats=True)
+
+
+class Molecule_pdb_file(MSection):
+    m_def = Section(validate=False)
+
+    molecule_pdb_value = Quantity(type=str, shape=[13, '*'], description='''13-by-x array, contains all
+                                                                            data from molecule.pdb file''')
 
 class Input(MSection):
     m_def = Section(validate=False)
     
     settings = SubSection(sub_section=Settings.m_def, repeats=False)
     run_lf_slr = SubSection(sub_section=Run_lf_slr.m_def, repeats=False)
+    molecule_pdb_file = SubSection(sub_section=Molecule_pdb_file.m_def, repeats=False)
     files_for_kmc = SubSection(sub_section=Files_for_kmc.m_def, repeats=False)
 
 class LF_add_info(MSection):

@@ -27,7 +27,8 @@ from .metainfo.lightforge import (
                             Input, Settings, Settings_pair_input, Settings_materials, Settings_layers, 
                             Layer_molecule_species, Settings_electrodes, Settings_hole_transfer_integrals, 
                             Settings_electron_transfer_integrals, Settings_dexter_transfer_integrals, 
-                            Settings_qp_output_files, Run_lf_slr, Files_for_kmc, 
+                            Settings_qp_output_files, Run_lf_slr, Files_for_kmc, Js_homo_mol_pairs,
+                            Sigma_mol_pairs, Molecule_pdb_file, 
                             LF_add_info, Material_data, Lightforge_data, Mobility, Particle_densities, 
                             Charge_density_average, Exciton_decay_density_average, 
                             Photon_creation_density_average,
@@ -57,6 +58,7 @@ def DetailedParser(filepath, archive):
     device_data_hasrun= False
     foerster_hasrun = False
     material_data_hasrun = False
+    files_for_kmc_hasrun = False
     _coordinates = []
     coordinates_counter = 0
     coordinates_rows = [0]
@@ -837,7 +839,53 @@ def DetailedParser(filepath, archive):
                         if 'epsilon_material' in line:
                             sec_settings.lf_epsilon_material = parts[1]
                             continue
-                        
+                if re.search(r'molecule.pdb', file):
+                    sec_molecule_pdb = sec_input.m_create(Molecule_pdb_file)
+                    _molecule_pdb_value = []
+                    for i, line in enumerate(f):
+                        _a = line.split()
+                        _molecule_pdb_value.append(_a)
+
+                    # continue here: create quantities for each column of molecule.pdb, ask deniz about
+                    # those columns. Dont forget last row "TER" in file
+
+                if 'files_for_kmc' in root:
+                    if not files_for_kmc_hasrun:
+                        sec_files_for_kmc = sec_input.m_create(Files_for_kmc)
+                        files_for_kmc_hasrun = True
+                    if 'COM' in file:
+                        _COM = []
+                        for i, line in enumerate(f):
+                            _a = [float(x) for x in list(line.split())]
+                            _COM.append(_a)
+                        sec_files_for_kmc.lf_COM = _COM
+                    if 'inner_idxs' in file:
+                        _lf_inner_idxs = []
+                        for i, line in enumerate(f):
+                            _lf_inner_idxs.append(float(line))
+                        sec_files_for_kmc.lf_inner_idxs = _lf_inner_idxs
+                    if 'ip_ea' in file.lower():
+                        _lf_ip_ea = []
+                        for i, line in enumerate(f):
+                            _a = [float(x) for x in list(line.split())]
+                            _lf_ip_ea.append(_a)
+                        sec_files_for_kmc.lf_ip_ea = _lf_ip_ea
+                    if re.search(r'js_homo_mol_pairs_\d+', file.lower()):
+                        sec_js_homo_mol_pairs = sec_files_for_kmc.m_create(Js_homo_mol_pairs)
+                        _js_homo_mol_pairs_value = []
+                        for i, line in enumerate(f):
+                            _a = [float(x) for x in list(line.split())]
+                            _js_homo_mol_pairs_value.append(_a)
+                        sec_js_homo_mol_pairs.js_homo_mol_pairs_value = _js_homo_mol_pairs_value
+                    if re.search(r'sigma_mol_pairs_\d+', file.lower()):
+                        sec_sigma_mol_pairs = sec_files_for_kmc.m_create(Sigma_mol_pairs)
+                        _sigma_mol_pairs_value = []
+                        for i, line in enumerate(f):
+                            _sigma_mol_pairs_value.append(float(line))
+                        sec_sigma_mol_pairs.sigma_mol_pairs_value = _sigma_mol_pairs_value
+
+
+
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):
