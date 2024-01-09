@@ -408,18 +408,27 @@ class Files_for_kmc(MSection):
     sigma_mol_pairs = SubSection(sub_section=Sigma_mol_pairs.m_def, repeats=True)
 
 
-class Molecule_pdb_file(MSection):
+class LF_molecule_pdb_file(MSection):
     m_def = Section(validate=False)
 
-    molecule_pdb_value = Quantity(type=str, shape=[13, '*'], description='''13-by-x array, contains all
-                                                                            data from molecule.pdb file''')
+    lf_residue_class = Quantity(type=str, shape=['*'], description='ATOM = standard residue')
+    lf_atom_serial_number = Quantity(type=int, shape=['*'])
+    lf_atom_name = Quantity(type=str, shape=['*'])
+    lf_residue_type = Quantity(type=str, shape=['*'])
+    lf_chain_identifier = Quantity(type=str, shape=['*'])
+    lf_residue_sequence_number = Quantity(type=np.float64, shape=['*'])
+    lf_molecule_pdb_coordinates = Quantity(type=np.float64, shape=[3, '*'])
+    lf_molecule_pdb_occupancy = Quantity(type=np.float64, shape=['*'])
+    lf_molecule_pdb_temperature = Quantity(type=np.float64, shape=['*'], description='''Temperature factor''')
+    lf_molecule_pdb_element = Quantity(type=str, shape=['*'], description='Chemical element')
+    lf_molecule_pdb_charge = Quantity(type=np.float64, shape=['*'])
 
 class Input(MSection):
     m_def = Section(validate=False)
     
     settings = SubSection(sub_section=Settings.m_def, repeats=False)
     run_lf_slr = SubSection(sub_section=Run_lf_slr.m_def, repeats=False)
-    molecule_pdb_file = SubSection(sub_section=Molecule_pdb_file.m_def, repeats=False)
+    molecule_pdb_file = SubSection(sub_section=LF_molecule_pdb_file.m_def, repeats=False)
     files_for_kmc = SubSection(sub_section=Files_for_kmc.m_def, repeats=False)
 
 class LF_add_info(MSection):

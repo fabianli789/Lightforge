@@ -28,7 +28,7 @@ from .metainfo.lightforge import (
                             Layer_molecule_species, Settings_electrodes, Settings_hole_transfer_integrals, 
                             Settings_electron_transfer_integrals, Settings_dexter_transfer_integrals, 
                             Settings_qp_output_files, Run_lf_slr, Files_for_kmc, Js_homo_mol_pairs,
-                            Sigma_mol_pairs, Molecule_pdb_file, 
+                            Sigma_mol_pairs, LF_molecule_pdb_file, 
                             LF_add_info, Material_data, Lightforge_data, Mobility, Particle_densities, 
                             Charge_density_average, Exciton_decay_density_average, 
                             Photon_creation_density_average,
@@ -840,14 +840,44 @@ def DetailedParser(filepath, archive):
                             sec_settings.lf_epsilon_material = parts[1]
                             continue
                 if re.search(r'molecule.pdb', file):
-                    sec_molecule_pdb = sec_input.m_create(Molecule_pdb_file)
-                    _molecule_pdb_value = []
+                    sec_molecule_pdb = sec_input.m_create(LF_molecule_pdb_file)
+                    _lf_residue_class = []
+                    _lf_atom_serial_number = []
+                    _lf_atom_name = []
+                    _lf_residue_type = []
+                    _lf_chain_identifier = []
+                    _lf_residue_sequence_number = []
+                    _lf_molecule_pdb_coordinates = []
+                    _lf_molecule_pdb_occupancy = []
+                    _lf_molecule_pdb_temperature = []
+                    _lf_molecule_pdb_element = []
+                    _lf_molecule_pdb_charge = []
                     for i, line in enumerate(f):
-                        _a = line.split()
-                        _molecule_pdb_value.append(_a)
-
-                    # continue here: create quantities for each column of molecule.pdb, ask deniz about
-                    # those columns. Dont forget last row "TER" in file
+                        if 'TER' in line:
+                            continue
+                        parts = line.split()
+                        _lf_residue_class.append(parts[0])
+                        _lf_atom_serial_number.append(int(parts[1]))
+                        _lf_atom_name.append(parts[2])
+                        _lf_residue_type.append(parts[3])
+                        _lf_chain_identifier.append(parts[4])
+                        _lf_residue_sequence_number.append(parts[5])
+                        _lf_molecule_pdb_coordinates.append(parts[6:9])
+                        _lf_molecule_pdb_occupancy.append(parts[9])
+                        _lf_molecule_pdb_temperature.append(parts[10])
+                        _lf_molecule_pdb_element.append(parts[11])
+                        _lf_molecule_pdb_charge.append(parts[12])
+                    sec_molecule_pdb.lf_residue_class = _lf_residue_class
+                    sec_molecule_pdb.lf_atom_serial_number = _lf_atom_serial_number
+                    sec_molecule_pdb.lf_atom_name = _lf_atom_name
+                    sec_molecule_pdb.lf_residue_type = _lf_residue_type
+                    sec_molecule_pdb.lf_chain_identifier = _lf_chain_identifier
+                    sec_molecule_pdb.lf_residue_sequence_number = _lf_residue_sequence_number
+                    sec_molecule_pdb.lf_molecule_pdb_coordinates = _lf_molecule_pdb_coordinates
+                    sec_molecule_pdb.lf_molecule_pdb_occupancy = _lf_molecule_pdb_occupancy
+                    sec_molecule_pdb.lf_molecule_pdb_temperature = _lf_molecule_pdb_temperature
+                    sec_molecule_pdb.lf_molecule_pdb_element = _lf_molecule_pdb_element
+                    sec_molecule_pdb.lf_molecule_pdb_charge = _lf_molecule_pdb_charge
 
                 if 'files_for_kmc' in root:
                     if not files_for_kmc_hasrun:
