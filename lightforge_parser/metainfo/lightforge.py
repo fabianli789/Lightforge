@@ -296,13 +296,13 @@ class Layer_molecule_species(MSection):
                                                                             with materials defined in 
                                                                     settings_materials.material_name.
                                                                     Order of materials corresponds to
-                                                                    order of layer_concentration''')
+                                                                    order of molecular_species_concentration''')
     molecule_species_concentration = Quantity(type=np.float64, shape=['*'], description='''concentration of 
                                                                                 material in layer,
                                                                                 max concentration is 1.
                                                                                 Order of concentrations
                                                                                 corresponds to order of
-                                                                                layer_material''')
+                                                                                molecular_species_material''')
 
 class Settings_layers(MSection):
     m_def = Section(validate=False)
