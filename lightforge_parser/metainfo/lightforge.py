@@ -39,6 +39,7 @@ class Coordinates(MSection):
 
 class Device_data(MSection):
     m_def = Section(validate=False)
+    
     coordinates = SubSection(sub_section=Coordinates.m_def, repeats=True)
     mol_types = SubSection(sub_section=Mol_types.m_def, repeats=True)
     site_energies = SubSection(sub_section=Site_energies.m_def, repeats=True)
@@ -327,8 +328,8 @@ class Settings_electrodes(MSection):
 class Settings_qp_output_files(MSection):
     m_def = Section(validate=False)
 
-    qp_output_files_name = Quantity(type=str, description='''files from Nanomatch GmbH software
-                                                             "QuantumPatch" (qp) are used.''')
+    qp_output_files_name = Quantity(type=str, description='''Files from Nanomatch GmbH software
+                                                             "QuantumPatch" (qp) that have been used.''')
     qp_output_files_output_zip = Quantity(type=str)    
 
 class Settings(MSection):

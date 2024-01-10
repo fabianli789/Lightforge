@@ -785,8 +785,8 @@ def DetailedParser(filepath, archive):
                             sec_settings.lf_temperature = parts[1]
                             continue
                         if 'field_direction' in line:
-                            _lf_field_direction = np.array(parts[1])
-                            sec_settings.lf_field_direction = _lf_field_direction # check!
+                            _lf_field_direction = parts[1].replace('[', '').replace(']', '').replace(',', '').split()
+                            sec_settings.lf_field_direction = _lf_field_direction
                             continue
                         if 'field_strength' in line:
                             _fields = parts[1].split()
