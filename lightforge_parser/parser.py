@@ -23,8 +23,8 @@ from nomad.parsing.file_parser import UnstructuredTextFileParser, Quantity
 from nomad.datamodel.optimade import Species
 from . import metainfo  # pylint: disable=unused-import
 from .metainfo.lightforge import (
-                            IV, IQE2, Current_density, Current_characteristics, Experiments, Material,
-                            Input, Settings, Settings_pair_input, Settings_materials, Settings_layers, 
+                            IV, IQE2, Current_density, Current_characteristics, LF_experiments, LF_material,
+                            LF_input, Settings, Settings_pair_input, Settings_materials, Settings_layers, 
                             Layer_molecule_species, Settings_electrodes, Settings_hole_transfer_integrals, 
                             Settings_electron_transfer_integrals, Settings_dexter_transfer_integrals, 
                             Settings_qp_output_files, Run_lf_slr, Files_for_kmc, Js_homo_mol_pairs,
@@ -42,8 +42,8 @@ from .metainfo.lightforge import (
 def DetailedParser(filepath, archive):
     sec_run = archive.m_create(Run)
     sec_calc = sec_run.m_create(Calculation)
-    sec_experiments =  sec_calc.m_create(Experiments)
-    sec_material = sec_calc.m_create(Material)
+    sec_experiments =  sec_calc.m_create(LF_experiments)
+    sec_material = sec_calc.m_create(LF_material)
     sec_current_characteristics = sec_experiments.m_create(Current_characteristics)
     sec_particle_densities = sec_experiments.m_create(Particle_densities)
     
@@ -51,7 +51,7 @@ def DetailedParser(filepath, archive):
     sec_IV = sec_current_characteristics.m_create(IV)
     sec_lightforge_data = sec_calc.m_create(Lightforge_data)
     
-    sec_input = sec_calc.m_create(Input)
+    sec_input = sec_calc.m_create(LF_input)
     
     exciton_molpairs_hasrun = False
     runtime_analysis_hasrun = False
@@ -62,11 +62,7 @@ def DetailedParser(filepath, archive):
     _coordinates = []
     coordinates_counter = 0
     coordinates_rows = [0]
-#    exclude_dir = set(['logs', 'runtime_data', 'device_data'])
-    for root, dirs, files in sorted(os.walk(filepath.parent)):
-        
-#        dirs[:] = [d for d in dirs if d not in exclude_dir]
-        
+    for root, dirs, files in sorted(os.walk(filepath.parent)):        
         natsort = lambda s: [int(t) if t.isdigit() else t.lower() for t in re.split('(\d+)', s)]
         
         files = sorted(files, key = natsort)

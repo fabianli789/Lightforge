@@ -222,13 +222,15 @@ class Runtime_analysis(MSection):
     m_def = Section(validate=False)
     event_counts_by_type = SubSection(sub_section=Event_counts_by_type.m_def, repeats=True)
 
-class Experiments(MSection):
+class LF_experiments(MSection):
     m_def = Section(validate=False)
+    
     current_characteristics = SubSection(sub_section=Current_characteristics.m_def, repeats=False)
     particle_densities = SubSection(sub_section=Particle_densities.m_def, repeats=False)
     runtime_analysis = SubSection(sub_section=Runtime_analysis.m_def, repeats=False)
-class Material(MSection):
+class LF_material(MSection):
     m_def = Section(validate=False)
+    
     device_data = SubSection(sub_section=Device_data.m_def, repeats=False)
     electrodes = SubSection(sub_section=Electrodes.m_def, repeats=False)
     energy_levels = SubSection(sub_section=Energy_levels.m_def, repeats=False)
@@ -423,7 +425,7 @@ class LF_molecule_pdb_file(MSection):
     lf_molecule_pdb_element = Quantity(type=str, shape=['*'], description='Chemical element')
     lf_molecule_pdb_charge = Quantity(type=np.float64, shape=['*'])
 
-class Input(MSection):
+class LF_input(MSection):
     m_def = Section(validate=False)
     
     settings = SubSection(sub_section=Settings.m_def, repeats=False)
@@ -455,9 +457,9 @@ class Lightforge_data(MSection):
 class LightforgeCalculation(simulation.calculation.Calculation):
     m_def = Section(validate=False, extends_base_section=True)    
     
-    experiments = SubSection(sub_section=Experiments.m_def, repeats=False)
-    material = SubSection(sub_section=Material.m_def, repeats=False)
-    input = SubSection(sub_section=Input.m_def, repeats=False)
+    lf_experiments = SubSection(sub_section=LF_experiments.m_def, repeats=False)
+    lf_material = SubSection(sub_section=LF_material.m_def, repeats=False)
+    lf_input = SubSection(sub_section=LF_input.m_def, repeats=False)
     lightforge_data = SubSection(sub_section=Lightforge_data.m_def, repeats=False)
 
 m_package.__init_metainfo__()
