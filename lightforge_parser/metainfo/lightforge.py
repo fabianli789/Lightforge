@@ -451,10 +451,31 @@ class Material_data(MSection):
     m_def = Section(validate=False)
     
     lf_add_info = SubSection(sub_section=LF_add_info.m_def, repeats=True)
+
+class LF_particle_positions(MSection):
+    m_def = Section(validate=False)
+
+    value = Quantity(type=np.float64, shape=[5, '*'])
+
+class LF_experiment_inventory(MSection):
+    m_def = Section(validate=False)
+
+    lf_experiment_inventory_field_direction = Quantity(type=np.float64, shape=[3])
+    lf_experiment_inventory_field_strength = Quantity(type=np.float64)
+    lf_experiment_inventory_initial_charges = Quantity(type=np.float64, shape=['*'])
+    lf_experiment_inventory_job_id = Quantity(type=int)
+    lf_experiment_inventory_mat_id = Quantity(type=int)
+    lf_experiment_inventory_settings_id = Quantity(type=int)
+class Runtime_data(MSection):
+    m_def = Section(validate=False)
+
+    lf_experiment_inventory = SubSection(sub_section=LF_experiment_inventory.m_def, repeats=True)
+    lf_particle_positions = SubSection(sub_section=LF_particle_positions.m_def, repeats=True)
 class Lightforge_data(MSection):
     m_def = Section(validate=False)
     
     material_data = SubSection(sub_section=Material_data.m_def, repeats=False)
+    runtime_data = SubSection(sub_section=Runtime_data.m_def, repeats=False)
 class LightforgeCalculation(simulation.calculation.Calculation):
     m_def = Section(validate=False, extends_base_section=True)    
     
