@@ -60,6 +60,7 @@ def DetailedParser(filepath, archive):
     foerster_hasrun = False
     material_data_hasrun = False
     files_for_kmc_hasrun = False
+    runtime_data_hasrun = False
     _coordinates = []
     coordinates_counter = 0
     coordinates_rows = [0]
@@ -910,9 +911,60 @@ def DetailedParser(filepath, archive):
                         for i, line in enumerate(f):
                             _sigma_mol_pairs_value.append(float(line))
                         sec_sigma_mol_pairs.sigma_mol_pairs_value = _sigma_mol_pairs_value
-
-
-
+                if 'runtime_data' in root:
+                    if not runtime_data_hasrun:
+                        sec_runtime_data = sec_lightforge_data.m_create(Runtime_data)
+                        runtime_data_hasrun = True
+                    if re.search(r'experiment_inventory_\d+', file):
+                        sec_experiment_inventory = sec_runtime_data.m_create(LF_experiment_inventory)
+                        experiment_inventory_field_direction_section = False
+                        experiment_inventory_initial_charges_section = False
+                        _lf_experiment_inventory_field_direction = []
+                        _lf_experiment_inventory_initial_charges = []
+                        for i, line in enumerate(f):
+                            if 'field_direction' in line:
+                                experiment_inventory_field_direction_section = True
+                                continue
+                            if re.search(r'^-', line) and experiment_inventory_field_direction_section == True:
+                                parts = line.replace(' ', '').split('-')
+                                _lf_experiment_inventory_field_direction.append(parts[1])
+                                continue
+                            if re.search(r'^\w', line) and experiment_inventory_field_direction_section == True:
+                                sec_experiment_inventory.lf_experiment_inventory_field_direction = _lf_experiment_inventory_field_direction
+                                experiment_inventory_field_direction_section = False
+                            if 'field_strength' in line:
+                                parts = line.split(':')
+                                sec_experiment_inventory.lf_experiment_inventory_field_strength = parts[1]
+                                continue
+                            if 'initial_charges' in line:
+                                experiment_inventory_initial_charges_section = True
+                                continue
+                            if re.search(r'^-', line) and experiment_inventory_initial_charges_section == True:
+                                parts = line.replace(' ', '').split('-')
+                                _lf_experiment_inventory_initial_charges.append(parts[1])
+                                continue
+                            if re.search(r'^\w', line) and experiment_inventory_initial_charges_section == True:
+                                sec_experiment_inventory.lf_experiment_inventory_initial_charges = _lf_experiment_inventory_initial_charges
+                                experiment_inventory_initial_charges_section = False
+                            if 'job_id' in line:
+                                parts = line.split(':')
+                                sec_experiment_inventory.lf_experiment_inventory_job_id = int(parts[1])
+                                continue
+                            if 'mat_id' in line:
+                                parts = line.split(':')
+                                sec_experiment_inventory.lf_experiment_inventory_mat_id = int(parts[1])
+                                continue
+                            if 'settings_id' in line:
+                                parts = line.split(':')
+                                sec_experiment_inventory.lf_experiment_inventory_settings_id = int(parts[1])
+                                continue
+                    if re.search(r'particle_positions_\d+', file):
+                        sec_particle_positions = sec_runtime_data.m_create(LF_particle_positions)
+                        _lf_particle_positions_value = []
+                        for i, line in enumerate(f):
+                            parts = line.split()
+                            _lf_particle_positions_value.append(parts)
+                        sec_particle_positions.lf_particle_positions_value = _lf_particle_positions_value 
 class LightforgeParser():
 
     def parse(self, filepath, archive, logger):

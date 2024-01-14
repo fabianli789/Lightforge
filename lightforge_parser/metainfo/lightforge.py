@@ -455,7 +455,7 @@ class Material_data(MSection):
 class LF_particle_positions(MSection):
     m_def = Section(validate=False)
 
-    value = Quantity(type=np.float64, shape=[5, '*'])
+    lf_particle_positions_value = Quantity(type=np.float64, shape=[5, '*'])
 
 class LF_experiment_inventory(MSection):
     m_def = Section(validate=False)
