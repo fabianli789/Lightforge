@@ -96,7 +96,7 @@ class Host_emitter_transport_count(Emitter_emitter_transport_count):
 class Exciton_molpairs(MSection):
     m_def = Section(validate=False)
     emitter_emitter_transport_count = SubSection(sub_section=Emitter_emitter_transport_count.m_def, repeats=False)
-    host_emitter_transport_count = SubSection(sub_section=Host_emitter_transport_count.m_def, repeats=False)  # might be wrong
+    host_emitter_transport_count = SubSection(sub_section=Host_emitter_transport_count.m_def, repeats=False)
     host_host_transport_count = SubSection(sub_section=Host_host_transport_count.m_def, repeats=False)
 class Quenching_density_average(MSection):
     m_def = Section(validate=False)
@@ -132,7 +132,7 @@ class Exciton_decay_density_average(MSection):
     thermal = Quantity(type=np.float64, shape=['*'], description='thermal quenching')    
     photon = Quantity(type=np.float64, shape=['*'], description='number of photons created')
     recombination = Quantity(type=np.float64, shape=['*'], description='avg. number of recombinations')
-    x_axis = Quantity(type=np.float64, shape=['*'], description='device length in nanometers.')
+    exciton_decay_density_average_x_axis = Quantity(type=np.float64, shape=['*'], description='device length in nanometers.')
     
 class Charge_density_average(MSection):
     m_def = Section(validate=False)

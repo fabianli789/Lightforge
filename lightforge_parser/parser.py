@@ -56,7 +56,7 @@ def DetailedParser(filepath, archive):
     
     exciton_molpairs_hasrun = False
     runtime_analysis_hasrun = False
-    device_data_hasrun= False
+#    device_data_hasrun= False
     foerster_hasrun = False
     material_data_hasrun = False
     files_for_kmc_hasrun = False
@@ -216,8 +216,8 @@ def DetailedParser(filepath, archive):
                         _recombination = file_exciton_decay_density_average['total']['creation']['recombination']
                         sec_exciton_decay_density_average.recombination = _recombination
                     if 'x_axis' in file_exciton_decay_density_average:
-                        _x_axis = file_exciton_decay_density_average['x_axis']
-                        sec_exciton_decay_density_average.x_axis = _x_axis    
+                        _exciton_decay_density_average_x_axis = file_exciton_decay_density_average['x_axis']
+                        sec_exciton_decay_density_average.exciton_decay_density_average_x_axis = _exciton_decay_density_average_x_axis    
                 
                 if re.search(r'photon_creation_density_average_\d+', file) and 'all_data_points' not in root:
                     sec_photon_creation_density_average = sec_particle_densities.m_create(Photon_creation_density_average)
