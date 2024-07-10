@@ -281,6 +281,7 @@ class Settings_materials(MSection):
     lf_molecule_pdb = Quantity(type=str, description='name of file that provides data about the molecules.')
     lf_qp_output_sigma = Quantity(type=str)
     lf_qp_output_eaip = Quantity(type=str)
+    lf_qp_output_lambda = Quantity(type=str)
     lf_energies = Quantity(type=np.float64, shape=['*', 2], description='''2-by-x matrix. 1st value is 
                                                                            HOMO in eV, 2nd one is
                                                                            LUMO in eV. Check 
@@ -325,11 +326,11 @@ class Settings_electrodes(MSection):
     electrode_wf_decay_length = Quantity(type=np.float64)
     electrode_coupling = Quantity(type=np.float64)
 
+
 class Settings_qp_output_files(MSection):
     m_def = Section(validate=False)
 
-    qp_output_files_name = Quantity(type=str, description='''Files from Nanomatch GmbH software
-                                                             "QuantumPatch" (qp) that have been used.''')
+    qp_output_files_name = Quantity(type=str, description='Name of QuantumPatch files used by this simulation run.')
     qp_output_files_output_zip = Quantity(type=str)    
 
 class Settings(MSection):
@@ -381,12 +382,24 @@ class Run_lf_slr(MSection):
     lf_ntasks = Quantity(type=int, description='number of CPUs used.')
     lf_mem_per_cpu = Quantity(type=np.float64, description='memory in MB used per CPU')
 
+class Js_lumo_mol_pairs(MSection):
+    m_def = Section(validate=False)
+
+    js_lumo_mol_pairs_value = Quantity(type=np.float64, shape=[2, '*'], description='''2-by-x array, contains all data from Js_lumo_mol_pairs files in files_for_kmc folder.''')
+
 class Js_homo_mol_pairs(MSection):
     m_def = Section(validate=False)
 
     js_homo_mol_pairs_value = Quantity(type=np.float64, shape=[2, '*'], description='''2-by-x array, contains all data
                                                                         from Js_homo_mol_pairs files in
                                                                         files_for_kmc folder''')
+class Js_dexter_mol_pairs(MSection):
+    m_def = Section(validate=False)
+
+    js_dexter_mol_pairs_value = Quantity(type=np.float64, shape=[2, '*'], description='''2-by-x array, contains all data
+                                                                        from Js_dexter_mol_pairs files in
+                                                                        files_for_kmc folder''')
+
 
 class Sigma_mol_pairs(MSection):
     m_def = Section(validate=False)
@@ -407,9 +420,15 @@ class Files_for_kmc(MSection):
     lf_ip_ea = Quantity(type=np.float64, shape=[2, '*'], description='''2-by-x array, containing the data
                                                                         from IP_EA.dat file in 
                                                                         files_for_kmc''')                                                                  
-    js_homo_mol_pairs = SubSection(sub_section=Js_homo_mol_pairs.m_def, repeats=True)
-    sigma_mol_pairs = SubSection(sub_section=Sigma_mol_pairs.m_def, repeats=True)
+    js_homo_mol_pairs = SubSection(sub_section=Js_homo_mol_pairs.m_def, repeats=False)
+    sigma_mol_pairs = SubSection(sub_section=Sigma_mol_pairs.m_def, repeats=False)
+    js_lumo_mol_pairs = SubSection(sub_section=Js_lumo_mol_pairs.m_def, repeats=False)
+    js_dexter_mol_pairs = SubSection(sub_section=Js_dexter_mol_pairs.m_def, repeats=False)
 
+class LF_vacuum_lambda(MSection):
+    m_def = Section(validate=False)
+    lf_vacuum_lambda_hole = Quantity(type=np.float64, description='reorganization energy lambda for hole in eV.')
+    lf_vacuum_lambda_electron = Quantity(type=np.float64, description='reorganization energy lambda for electron in eV.')
 
 class LF_molecule_pdb_file(MSection):
     m_def = Section(validate=False)
@@ -433,7 +452,7 @@ class LF_input(MSection):
     run_lf_slr = SubSection(sub_section=Run_lf_slr.m_def, repeats=False)
     molecule_pdb_file = SubSection(sub_section=LF_molecule_pdb_file.m_def, repeats=False)
     files_for_kmc = SubSection(sub_section=Files_for_kmc.m_def, repeats=False)
-
+    vacuum_lambda = SubSection(sub_section=LF_vacuum_lambda.m_def, repeats=False)
 class LF_add_info(MSection):
     m_def = Section(validate=False)
 

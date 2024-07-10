@@ -27,8 +27,8 @@ from .metainfo.lightforge import (
                             LF_input, Settings, Settings_pair_input, Settings_materials, Settings_layers, 
                             Layer_molecule_species, Settings_electrodes, Settings_hole_transfer_integrals, 
                             Settings_electron_transfer_integrals, Settings_dexter_transfer_integrals, 
-                            Settings_qp_output_files, Run_lf_slr, Files_for_kmc, Js_homo_mol_pairs,
-                            Sigma_mol_pairs, LF_molecule_pdb_file, 
+                            Settings_qp_output_files, Run_lf_slr, Files_for_kmc, Js_homo_mol_pairs, Js_lumo_mol_pairs, Js_dexter_mol_pairs,
+                            Sigma_mol_pairs, LF_molecule_pdb_file, LF_vacuum_lambda,
                             LF_add_info, Material_data, Lightforge_data, Runtime_data, LF_experiment_inventory, 
                             LF_particle_positions, Mobility, Particle_densities, 
                             Charge_density_average, Exciton_decay_density_average, 
@@ -647,6 +647,9 @@ def DetailedParser(filepath, archive):
                         if 'qp_output_eaip' in line.lower() and materials_section == True:
                             sec_settings_materials.lf_qp_output_eaip = parts[1]
                             continue
+                        if 'qp_output_lambda' in line.lower() and materials_section == True:
+                            sec_settings_materials.lf_qp_output_lambda = parts[1]
+                            continue
                         if 'energies' in line and materials_section == True:
                             _lf_energies = []
                             energies_section = True
@@ -905,12 +908,36 @@ def DetailedParser(filepath, archive):
                             _a = [float(x) for x in list(line.split())]
                             _js_homo_mol_pairs_value.append(_a)
                         sec_js_homo_mol_pairs.js_homo_mol_pairs_value = _js_homo_mol_pairs_value
-                    if re.search(r'sigma_mol_pairs_\d+', file.lower()):
+                    if re.search(r'js_lumo_mol_pairs_\d+', file.lower()):
+                        sec_js_lumo_mol_pairs = sec_files_for_kmc.m_create(Js_lumo_mol_pairs)
+                        _js_lumo_mol_pairs_value = []
+                        for i, line in enumerate(f):
+                            _a = [float(x) for x in list(line.split())]
+                            _js_lumo_mol_pairs_value.append(_a)
+                        sec_js_lumo_mol_pairs.js_lumo_mol_pairs_value = _js_lumo_mol_pairs_value
+                    if re.search(r'js_dexter_mol_pairs_\d+', file.lower()):
+                        sec_js_dexter_mol_pairs = sec_files_for_kmc.m_create(Js_dexter_mol_pairs)
+                        _js_dexter_mol_pairs_value = []
+                        for i, line in enumerate(f):
+                            _a = [float(x) for x in list(line.split())]
+                            _js_dexter_mol_pairs_value.append(_a)
+                        sec_js_dexter_mol_pairs.js_dexter_mol_pairs_value = _js_dexter_mol_pairs_value
+                    if re.search(r'$sigma_mol_pairs_\d+', file.lower()):
                         sec_sigma_mol_pairs = sec_files_for_kmc.m_create(Sigma_mol_pairs)
                         _sigma_mol_pairs_value = []
                         for i, line in enumerate(f):
                             _sigma_mol_pairs_value.append(float(line))
                         sec_sigma_mol_pairs.sigma_mol_pairs_value = _sigma_mol_pairs_value
+                if 'vacuum_lambda' in root:
+                    sec_lf_vacuum_lambda = sec_input.m_create(LF_vacuum_lambda)
+                    if 'lambda' in file:
+                        for i, line in enumerate(f):
+                            if 'hole:' in line.lower():
+                                parts = line.split(':')
+                                sec_lf_vacuum_lambda.lf_vacuum_lambda_hole = float(parts[1]) 
+                            if 'electron:' in line.lower():
+                                parts = line.split(':')
+                                sec_lf_vacuum_lambda.lf_vacuum_lambda_electron = float(parts[1])
                 if 'runtime_data' in root:
                     if not runtime_data_hasrun:
                         sec_runtime_data = sec_lightforge_data.m_create(Runtime_data)
