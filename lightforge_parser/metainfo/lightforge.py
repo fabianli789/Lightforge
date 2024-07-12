@@ -503,4 +503,7 @@ class LightforgeCalculation(simulation.calculation.Calculation):
     lf_input = SubSection(sub_section=LF_input.m_def, repeats=False)
     lightforge_data = SubSection(sub_section=Lightforge_data.m_def, repeats=False)
 
+class Run(simulation.run.Run):
+    m_def = Section(validate=False, extends_base_section=True)
+
 m_package.__init_metainfo__()

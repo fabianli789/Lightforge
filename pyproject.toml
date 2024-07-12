@@ -33,4 +33,4 @@ tests = [
 packages = ["lightforge_parser", "lightforge_parser.metainfo"]
 
 [tool.setuptools.package-data]
-ligthforge_parser = ['metadata.yaml']
+lightforge_parser = ['metadata.yaml']
